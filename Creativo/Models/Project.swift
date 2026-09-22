@@ -129,12 +129,22 @@ extension Project {
         return mediaAssets.first { $0.id == identifier } ?? audioAssets.first
     }
 
-    /// Length of the track, falling back to the last section's end so the
-    /// timeline stays usable before any audio is imported.
+    /// Canvas a clip gets before any audio is imported.
+    ///
+    /// Three minutes, the length of a song. Without it the timeline would be
+    /// exactly as long as its last section, so shortening an outro would
+    /// shrink the canvas and there would be no room left to drag it back out.
+    static let fallbackTimelineDuration: TimeInterval = 180
+
+    /// Length of the track.
+    ///
+    /// The imported audio decides it. With no audio the sections decide, never
+    /// falling below the default canvas, so editing a section can shrink that
+    /// section but never the timeline it lives on.
     var timelineDuration: TimeInterval {
         if let asset = primaryAudioAsset, asset.duration > 0 { return asset.duration }
         let sectionEnd = musicSections.compactMap { $0.musicFacet?.endTime }.max() ?? 0
-        return max(sectionEnd, 0)
+        return max(sectionEnd, Self.fallbackTimelineDuration)
     }
 
     var sortedMarkers: [TimelineMarker] {

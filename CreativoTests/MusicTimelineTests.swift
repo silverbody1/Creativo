@@ -3,10 +3,19 @@ import SwiftData
 @testable import Creativo
 
 final class MusicTimelineTests: CreativoTestCase {
+    /// A clip whose track length is **stated**, not inferred.
+    ///
+    /// The asset carries no file — these tests never play anything — but it
+    /// pins the duration, so a test about section chaining cannot accidentally
+    /// become a test about the fallback length.
     private func makeClip(duration: TimeInterval = 240) -> Project {
         let project = ProjectService.create(name: "PARTENAIRE", type: .musicVideo, context: context)
-        // No audio file in tests: the timeline falls back to the length the
-        // sections describe, which is exactly the behaviour being tested.
+
+        let asset = ProjectMediaAsset(type: .audio, displayName: "master", duration: duration)
+        asset.project = project
+        context.insert(asset)
+        project.primaryAudioAssetID = asset.id
+
         let intro = MusicVideoService.createSection(in: project, kind: .intro, context: context)
         intro.musicFacet?.startTime = 0
         intro.musicFacet?.endTime = duration
@@ -277,9 +286,35 @@ final class MusicTimelineTests: CreativoTestCase {
         }
     }
 
-    func testTimelineDurationFallsBackToTheSectionsWhenThereIsNoAudio() throws {
-        let project = makeClip(duration: 240)
-        XCTAssertEqual(project.timelineDuration, 240)
+    // MARK: Length of the track
+
+    func testAClipWithoutAudioStartsOnAUsableCanvas() throws {
+        let project = ProjectService.create(name: "PARTENAIRE", type: .musicVideo, context: context)
         XCTAssertNil(project.primaryAudioAsset)
+        XCTAssertEqual(project.timelineDuration, Project.fallbackTimelineDuration)
+    }
+
+    func testSectionsExtendTheCanvasButNeverShrinkIt() throws {
+        let project = ProjectService.create(name: "PARTENAIRE", type: .musicVideo, context: context)
+        let intro = MusicVideoService.createSection(in: project, kind: .intro, context: context)
+        intro.musicFacet?.startTime = 0
+        intro.musicFacet?.endTime = 300
+        XCTAssertEqual(project.timelineDuration, 300)
+
+        // Shortening a section must not shrink the timeline under it: there
+        // would be nowhere left to drag the section back out to.
+        intro.musicFacet?.endTime = 30
+        XCTAssertEqual(project.timelineDuration, Project.fallbackTimelineDuration)
+        XCTAssertGreaterThan(project.timelineDuration, 30)
+    }
+
+    func testImportedAudioDecidesTheLength() throws {
+        let project = ProjectService.create(name: "PARTENAIRE", type: .musicVideo, context: context)
+        let asset = ProjectMediaAsset(type: .audio, displayName: "master", duration: 42)
+        asset.project = project
+        context.insert(asset)
+        project.primaryAudioAssetID = asset.id
+
+        XCTAssertEqual(project.timelineDuration, 42)
     }
 }
