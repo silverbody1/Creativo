@@ -47,7 +47,7 @@ struct ShotsView: View {
             presenting: shotPendingDeletion
         ) { shot in
             Button("Supprimer", role: .destructive) {
-                ShotService.delete(shot, in: modelContext)
+                ShotService.delete(shot, context: modelContext)
                 shotPendingDeletion = nil
             }
             Button("Annuler", role: .cancel) { shotPendingDeletion = nil }
@@ -78,7 +78,7 @@ struct ShotsView: View {
                                 shotBeingEdited = shot
                             } label: {
                                 ShotRow(shot: shot) {
-                                    ShotService.advanceStatus(of: shot, in: modelContext)
+                                    ShotService.advanceStatus(of: shot, context: modelContext)
                                 }
                             }
                             .buttonStyle(.plain)
@@ -164,14 +164,14 @@ struct ShotsView: View {
         Menu("Statut") {
             ForEach(ShotStatus.allCases) { status in
                 Button {
-                    ShotService.setStatus(status, on: shot, in: modelContext)
+                    ShotService.setStatus(status, on: shot, context: modelContext)
                 } label: {
                     Label(status.displayName, systemImage: status.symbolName)
                 }
             }
         }
-        Button("Monter") { ShotService.shift(shot, by: -1, in: modelContext) }
-        Button("Descendre") { ShotService.shift(shot, by: 1, in: modelContext) }
+        Button("Monter") { ShotService.shift(shot, by: -1, context: modelContext) }
+        Button("Descendre") { ShotService.shift(shot, by: 1, context: modelContext) }
         Divider()
         Button("Supprimer…", role: .destructive) { shotPendingDeletion = shot }
     }
@@ -226,7 +226,7 @@ struct ShotsView: View {
     }
 
     private func addShot(to scene: StoryScene) {
-        shotBeingEdited = ShotService.create(in: scene, in: modelContext)
+        shotBeingEdited = ShotService.create(in: scene, context: modelContext)
     }
 }
 

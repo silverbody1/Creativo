@@ -53,7 +53,7 @@ struct SceneListView: View {
             ToolbarItem(placement: .automatic) {
                 Menu {
                     Button("Renuméroter les scènes") {
-                        SceneService.renumberSequentially(project, in: modelContext)
+                        SceneService.renumberSequentially(project, context: modelContext)
                     }
                     .disabled(project.scenes.isEmpty)
                 } label: {
@@ -119,15 +119,15 @@ struct SceneListView: View {
     @ViewBuilder
     private func contextMenu(for scene: StoryScene) -> some View {
         Button("Modifier") { selectedScene = scene }
-        Button("Monter") { SceneService.shift(scene, by: -1, in: modelContext) }
+        Button("Monter") { SceneService.shift(scene, by: -1, context: modelContext) }
             .disabled(!isReorderable || scene.orderIndex == 0)
-        Button("Descendre") { SceneService.shift(scene, by: 1, in: modelContext) }
+        Button("Descendre") { SceneService.shift(scene, by: 1, context: modelContext) }
             .disabled(!isReorderable || scene.orderIndex >= project.scenes.count - 1)
         Menu("Statut") {
             ForEach(SceneStatus.allCases) { status in
                 Button {
                     scene.status = status
-                    SceneService.commitEdits(to: scene, in: modelContext)
+                    SceneService.commitEdits(to: scene, context: modelContext)
                 } label: {
                     Label(status.displayName, systemImage: status.symbolName)
                 }
@@ -166,7 +166,7 @@ struct SceneListView: View {
     }
 
     private func addScene() {
-        let scene = SceneService.create(in: project, in: modelContext)
+        let scene = SceneService.create(in: project, context: modelContext)
         selectedScene = scene
     }
 
@@ -177,7 +177,7 @@ struct SceneListView: View {
     private func delete(_ scene: StoryScene) {
         if selectedScene?.id == scene.id { selectedScene = nil }
         scenePendingDeletion = nil
-        SceneService.delete(scene, in: modelContext)
+        SceneService.delete(scene, context: modelContext)
     }
 }
 

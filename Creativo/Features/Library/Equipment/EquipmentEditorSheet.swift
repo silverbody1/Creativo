@@ -63,7 +63,7 @@ struct EquipmentEditorSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminé") {
                         item.touch()
-                        LibraryService.commitEdits(in: modelContext)
+                        LibraryService.commitEdits(context: modelContext)
                         dismiss()
                     }
                     .keyboardShortcut(.defaultAction)
@@ -71,7 +71,7 @@ struct EquipmentEditorSheet: View {
             }
             .confirmationDialog("Supprimer ce matériel ?", isPresented: $isConfirmingDeletion) {
                 Button("Supprimer", role: .destructive) {
-                    LibraryService.deleteEquipment(item, in: modelContext)
+                    LibraryService.deleteEquipment(item, context: modelContext)
                     dismiss()
                 }
                 Button("Annuler", role: .cancel) {}

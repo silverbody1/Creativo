@@ -112,7 +112,7 @@ struct BudgetLineEditorSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminé") {
-                        BudgetService.commitEdits(to: line, in: modelContext)
+                        BudgetService.commitEdits(to: line, context: modelContext)
                         dismiss()
                     }
                     .keyboardShortcut(.defaultAction)
@@ -120,7 +120,7 @@ struct BudgetLineEditorSheet: View {
             }
             .confirmationDialog("Supprimer cette ligne ?", isPresented: $isConfirmingDeletion) {
                 Button("Supprimer", role: .destructive) {
-                    BudgetService.delete(line, in: modelContext)
+                    BudgetService.delete(line, context: modelContext)
                     dismiss()
                 }
                 Button("Annuler", role: .cancel) {}

@@ -60,7 +60,7 @@ struct BudgetView: View {
             presenting: linePendingDeletion
         ) { line in
             Button("Supprimer", role: .destructive) {
-                BudgetService.delete(line, in: modelContext)
+                BudgetService.delete(line, context: modelContext)
                 linePendingDeletion = nil
             }
             Button("Annuler", role: .cancel) { linePendingDeletion = nil }
@@ -225,7 +225,7 @@ struct BudgetView: View {
     }
 
     private func addLine(category: BudgetCategory) {
-        lineBeingEdited = BudgetService.create(in: project, category: category, in: modelContext)
+        lineBeingEdited = BudgetService.create(in: project, category: category, context: modelContext)
     }
 }
 
@@ -291,7 +291,7 @@ struct TargetBudgetSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminé") {
-                        BudgetService.setTarget(project.targetBudget, on: project, in: modelContext)
+                        BudgetService.setTarget(project.targetBudget, on: project, context: modelContext)
                         dismiss()
                     }
                     .keyboardShortcut(.defaultAction)

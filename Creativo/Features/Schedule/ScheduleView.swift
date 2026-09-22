@@ -42,7 +42,7 @@ struct ScheduleView: View {
             presenting: dayPendingDeletion
         ) { day in
             Button("Supprimer", role: .destructive) {
-                ScheduleService.delete(day, in: modelContext)
+                ScheduleService.delete(day, context: modelContext)
                 dayPendingDeletion = nil
             }
             Button("Annuler", role: .cancel) { dayPendingDeletion = nil }
@@ -120,7 +120,7 @@ struct ScheduleView: View {
         let suggestedDate = days.last.map {
             Calendar.current.date(byAdding: .day, value: 1, to: $0.date) ?? $0.date
         } ?? .now
-        dayBeingEdited = ScheduleService.createDay(in: project, date: suggestedDate, in: modelContext)
+        dayBeingEdited = ScheduleService.createDay(in: project, date: suggestedDate, context: modelContext)
     }
 }
 

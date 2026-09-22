@@ -9,7 +9,7 @@ enum SceneService {
         title: String = "",
         environment: SceneEnvironment = .interior,
         timeOfDay: TimeOfDay = .day,
-        in context: ModelContext
+        context: ModelContext
     ) -> StoryScene {
         let nextIndex = (project.scenes.map(\.orderIndex).max() ?? -1) + 1
         let scene = StoryScene(
@@ -26,7 +26,7 @@ enum SceneService {
         return scene
     }
 
-    static func delete(_ scene: StoryScene, in context: ModelContext) {
+    static func delete(_ scene: StoryScene, context: ModelContext) {
         let project = scene.project
         context.delete(scene)
         if let project {
@@ -50,7 +50,7 @@ enum SceneService {
     }
 
     /// Moves a single scene by one position, for the keyboard and context menu.
-    static func shift(_ scene: StoryScene, by delta: Int, in context: ModelContext) {
+    static func shift(_ scene: StoryScene, by delta: Int, context: ModelContext) {
         guard let project = scene.project else { return }
         var ordered = project.sortedScenes
         guard let currentIndex = ordered.firstIndex(where: { $0.id == scene.id }) else { return }
@@ -67,7 +67,7 @@ enum SceneService {
     }
 
     /// Renumbers every scene sequentially, discarding manual numbers such as "12A".
-    static func renumberSequentially(_ project: Project, in context: ModelContext) {
+    static func renumberSequentially(_ project: Project, context: ModelContext) {
         for (index, scene) in project.sortedScenes.enumerated() {
             scene.sceneNumber = "\(index + 1)"
             scene.orderIndex = index
@@ -76,7 +76,7 @@ enum SceneService {
         PersistenceActions.save(context)
     }
 
-    static func commitEdits(to scene: StoryScene, in context: ModelContext) {
+    static func commitEdits(to scene: StoryScene, context: ModelContext) {
         scene.touch()
         PersistenceActions.save(context)
     }

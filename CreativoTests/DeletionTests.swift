@@ -6,18 +6,18 @@ import SwiftData
 /// its own test: owned children go, library entities stay.
 final class DeletionTests: CreativoTestCase {
     func testDeletingAProjectRemovesItsOwnedChildren() throws {
-        let project = ProjectService.create(name: "Clip", type: .musicVideo, in: context)
-        let scene = SceneService.create(in: project, title: "Intro", in: context)
-        ShotService.create(in: scene, title: "Apparition", in: context)
-        BudgetService.create(in: project, title: "Caméra", quantity: 1, unitPrice: 200, numberOfDays: 1, in: context)
-        ScheduleService.createDay(in: project, in: context)
+        let project = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
+        let scene = SceneService.create(in: project, title: "Intro", context: context)
+        ShotService.create(in: scene, title: "Apparition", context: context)
+        BudgetService.create(in: project, title: "Caméra", quantity: 1, unitPrice: 200, numberOfDays: 1, context: context)
+        ScheduleService.createDay(in: project, context: context)
 
         XCTAssertEqual(try countOf(StoryScene.self), 1)
         XCTAssertEqual(try countOf(Shot.self), 1)
         XCTAssertEqual(try countOf(BudgetLine.self), 1)
         XCTAssertEqual(try countOf(ShootDay.self), 1)
 
-        ProjectService.delete(project, in: context)
+        ProjectService.delete(project, context: context)
 
         XCTAssertEqual(try countOf(Project.self), 0)
         XCTAssertEqual(try countOf(StoryScene.self), 0)
@@ -27,16 +27,16 @@ final class DeletionTests: CreativoTestCase {
     }
 
     func testDeletingAProjectKeepsLibraryEntities() throws {
-        let project = ProjectService.create(name: "Clip", type: .musicVideo, in: context)
-        let person = LibraryService.createPerson(firstName: "Camille", lastName: "Roux", in: context)
-        let location = LibraryService.createLocation(name: "Studio Est", in: context)
-        let gear = LibraryService.createEquipment(name: "FX3", category: .camera, in: context)
+        let project = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
+        let person = LibraryService.createPerson(firstName: "Camille", lastName: "Roux", context: context)
+        let location = LibraryService.createLocation(name: "Studio Est", context: context)
+        let gear = LibraryService.createEquipment(name: "FX3", category: .camera, context: context)
 
-        LibraryService.assign(person, to: project, in: context)
-        LibraryService.attach(location, to: project, in: context)
-        LibraryService.assign(gear, to: project, in: context)
+        LibraryService.assign(person, to: project, context: context)
+        LibraryService.attach(location, to: project, context: context)
+        LibraryService.assign(gear, to: project, context: context)
 
-        ProjectService.delete(project, in: context)
+        ProjectService.delete(project, context: context)
 
         XCTAssertEqual(try countOf(Project.self), 0)
         XCTAssertEqual(try countOf(Person.self), 1)
@@ -47,16 +47,16 @@ final class DeletionTests: CreativoTestCase {
     }
 
     func testDeletingASceneRemovesItsShotsAndReindexesTheRest() throws {
-        let project = ProjectService.create(name: "Clip", type: .musicVideo, in: context)
-        let first = SceneService.create(in: project, title: "A", in: context)
-        let second = SceneService.create(in: project, title: "B", in: context)
-        let third = SceneService.create(in: project, title: "C", in: context)
-        ShotService.create(in: second, in: context)
-        ShotService.create(in: second, in: context)
+        let project = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
+        let first = SceneService.create(in: project, title: "A", context: context)
+        let second = SceneService.create(in: project, title: "B", context: context)
+        let third = SceneService.create(in: project, title: "C", context: context)
+        ShotService.create(in: second, context: context)
+        ShotService.create(in: second, context: context)
 
         XCTAssertEqual(try countOf(Shot.self), 2)
 
-        SceneService.delete(second, in: context)
+        SceneService.delete(second, context: context)
 
         XCTAssertEqual(try countOf(StoryScene.self), 2)
         XCTAssertEqual(try countOf(Shot.self), 0)
@@ -66,13 +66,13 @@ final class DeletionTests: CreativoTestCase {
     }
 
     func testDeletingAShotReindexesItsSiblings() throws {
-        let project = ProjectService.create(name: "Clip", type: .musicVideo, in: context)
-        let scene = SceneService.create(in: project, in: context)
-        let a = ShotService.create(in: scene, title: "A", in: context)
-        let b = ShotService.create(in: scene, title: "B", in: context)
-        let c = ShotService.create(in: scene, title: "C", in: context)
+        let project = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
+        let scene = SceneService.create(in: project, context: context)
+        let a = ShotService.create(in: scene, title: "A", context: context)
+        let b = ShotService.create(in: scene, title: "B", context: context)
+        let c = ShotService.create(in: scene, title: "C", context: context)
 
-        ShotService.delete(b, in: context)
+        ShotService.delete(b, context: context)
 
         XCTAssertEqual(scene.sortedShots.map(\.title), ["A", "C"])
         XCTAssertEqual(a.orderIndex, 0)
@@ -80,13 +80,13 @@ final class DeletionTests: CreativoTestCase {
     }
 
     func testDeletingAPersonRemovesAssignmentsButKeepsProjects() throws {
-        let clip = ProjectService.create(name: "Clip", type: .musicVideo, in: context)
-        let film = ProjectService.create(name: "Film", type: .film, in: context)
-        let person = LibraryService.createPerson(firstName: "Camille", lastName: "Roux", in: context)
-        LibraryService.assign(person, to: clip, in: context)
-        LibraryService.assign(person, to: film, in: context)
+        let clip = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
+        let film = ProjectService.create(name: "Film", type: .film, context: context)
+        let person = LibraryService.createPerson(firstName: "Camille", lastName: "Roux", context: context)
+        LibraryService.assign(person, to: clip, context: context)
+        LibraryService.assign(person, to: film, context: context)
 
-        LibraryService.deletePerson(person, in: context)
+        LibraryService.deletePerson(person, context: context)
 
         XCTAssertEqual(try countOf(Person.self), 0)
         XCTAssertEqual(try countOf(ProjectPersonAssignment.self), 0)
@@ -96,11 +96,11 @@ final class DeletionTests: CreativoTestCase {
     }
 
     func testDeletingEquipmentRemovesAssignmentsButKeepsProjects() throws {
-        let project = ProjectService.create(name: "Clip", type: .musicVideo, in: context)
-        let gear = LibraryService.createEquipment(name: "FX3", category: .camera, in: context)
-        LibraryService.assign(gear, to: project, in: context)
+        let project = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
+        let gear = LibraryService.createEquipment(name: "FX3", category: .camera, context: context)
+        LibraryService.assign(gear, to: project, context: context)
 
-        LibraryService.deleteEquipment(gear, in: context)
+        LibraryService.deleteEquipment(gear, context: context)
 
         XCTAssertEqual(try countOf(EquipmentItem.self), 0)
         XCTAssertEqual(try countOf(ProjectEquipmentAssignment.self), 0)
@@ -109,18 +109,18 @@ final class DeletionTests: CreativoTestCase {
     }
 
     func testDetachingALocationClearsItOnTheScenesOfThatProjectOnly() throws {
-        let clip = ProjectService.create(name: "Clip", type: .musicVideo, in: context)
-        let film = ProjectService.create(name: "Film", type: .film, in: context)
-        let studio = LibraryService.createLocation(name: "Studio Est", in: context)
-        LibraryService.attach(studio, to: clip, in: context)
-        LibraryService.attach(studio, to: film, in: context)
+        let clip = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
+        let film = ProjectService.create(name: "Film", type: .film, context: context)
+        let studio = LibraryService.createLocation(name: "Studio Est", context: context)
+        LibraryService.attach(studio, to: clip, context: context)
+        LibraryService.attach(studio, to: film, context: context)
 
-        let clipScene = SceneService.create(in: clip, title: "Intro", in: context)
+        let clipScene = SceneService.create(in: clip, title: "Intro", context: context)
         clipScene.location = studio
-        let filmScene = SceneService.create(in: film, title: "Ouverture", in: context)
+        let filmScene = SceneService.create(in: film, title: "Ouverture", context: context)
         filmScene.location = studio
 
-        LibraryService.detach(studio, from: clip, in: context)
+        LibraryService.detach(studio, from: clip, context: context)
 
         XCTAssertTrue(clip.locations.isEmpty)
         XCTAssertNil(clipScene.location)
@@ -130,11 +130,11 @@ final class DeletionTests: CreativoTestCase {
     }
 
     func testUnassigningAPersonKeepsThemInTheLibrary() throws {
-        let project = ProjectService.create(name: "Clip", type: .musicVideo, in: context)
-        let person = LibraryService.createPerson(firstName: "Léa", lastName: "Moreau", in: context)
-        let assignment = LibraryService.assign(person, to: project, in: context)
+        let project = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
+        let person = LibraryService.createPerson(firstName: "Léa", lastName: "Moreau", context: context)
+        let assignment = LibraryService.assign(person, to: project, context: context)
 
-        LibraryService.unassign(assignment, in: context)
+        LibraryService.unassign(assignment, context: context)
 
         XCTAssertEqual(try countOf(Person.self), 1)
         XCTAssertEqual(try countOf(ProjectPersonAssignment.self), 0)
@@ -142,11 +142,11 @@ final class DeletionTests: CreativoTestCase {
     }
 
     func testDeletingABudgetLineLeavesTheOthersIntact() throws {
-        let project = ProjectService.create(name: "Clip", type: .musicVideo, in: context)
-        let kept = BudgetService.create(in: project, title: "Gardée", quantity: 1, unitPrice: 100, numberOfDays: 1, in: context)
-        let removed = BudgetService.create(in: project, title: "Retirée", quantity: 1, unitPrice: 300, numberOfDays: 1, in: context)
+        let project = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
+        let kept = BudgetService.create(in: project, title: "Gardée", quantity: 1, unitPrice: 100, numberOfDays: 1, context: context)
+        let removed = BudgetService.create(in: project, title: "Retirée", quantity: 1, unitPrice: 300, numberOfDays: 1, context: context)
 
-        BudgetService.delete(removed, in: context)
+        BudgetService.delete(removed, context: context)
 
         XCTAssertEqual(project.budgetLines.map(\.id), [kept.id])
         XCTAssertEqual(project.budgetSummary.forecast, 100)

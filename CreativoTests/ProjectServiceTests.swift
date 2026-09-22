@@ -8,7 +8,7 @@ final class ProjectServiceTests: CreativoTestCase {
             name: "PARTENAIRE",
             type: .musicVideo,
             targetBudget: 12_000,
-            in: context
+            context: context
         )
 
         XCTAssertEqual(project.name, "PARTENAIRE")
@@ -19,49 +19,49 @@ final class ProjectServiceTests: CreativoTestCase {
     }
 
     func testCreateProjectWithoutNameUsesTypeDefault() throws {
-        let project = ProjectService.create(name: "   ", type: .commercial, in: context)
+        let project = ProjectService.create(name: "   ", type: .commercial, context: context)
         XCTAssertEqual(project.name, ProjectService.defaultName(for: .commercial))
         XCTAssertFalse(project.displayName.isEmpty)
     }
 
     func testCreatedAtAndUpdatedAtStartEqual() throws {
-        let project = ProjectService.create(name: "Test", type: .blank, in: context)
+        let project = ProjectService.create(name: "Test", type: .blank, context: context)
         XCTAssertEqual(project.createdAt, project.updatedAt)
     }
 
     func testTouchMovesUpdatedAtForward() throws {
-        let project = ProjectService.create(name: "Test", type: .blank, in: context)
+        let project = ProjectService.create(name: "Test", type: .blank, context: context)
         let before = project.updatedAt
         project.touch(before.addingTimeInterval(60))
         XCTAssertGreaterThan(project.updatedAt, before)
     }
 
     func testToggleFavoriteFlipsTheFlag() throws {
-        let project = ProjectService.create(name: "Test", type: .blank, in: context)
+        let project = ProjectService.create(name: "Test", type: .blank, context: context)
         XCTAssertFalse(project.isFavorite)
 
-        ProjectService.toggleFavorite(project, in: context)
+        ProjectService.toggleFavorite(project, context: context)
         XCTAssertTrue(project.isFavorite)
 
-        ProjectService.toggleFavorite(project, in: context)
+        ProjectService.toggleFavorite(project, context: context)
         XCTAssertFalse(project.isFavorite)
     }
 
     func testSetStatusUpdatesModificationDate() throws {
-        let project = ProjectService.create(name: "Test", type: .blank, in: context)
+        let project = ProjectService.create(name: "Test", type: .blank, context: context)
         project.touch(Date(timeIntervalSince1970: 0))
         let before = project.updatedAt
 
-        ProjectService.setStatus(.production, on: project, in: context)
+        ProjectService.setStatus(.production, on: project, context: context)
 
         XCTAssertEqual(project.status, .production)
         XCTAssertGreaterThan(project.updatedAt, before)
     }
 
     func testFilterMatchesNameSynopsisAndType() throws {
-        let clip = ProjectService.create(name: "PARTENAIRE", type: .musicVideo, in: context)
+        let clip = ProjectService.create(name: "PARTENAIRE", type: .musicVideo, context: context)
         clip.synopsis = "Un clip nocturne"
-        let film = ProjectService.create(name: "LISIÈRE", type: .film, in: context)
+        let film = ProjectService.create(name: "LISIÈRE", type: .film, context: context)
 
         let projects = [clip, film]
         XCTAssertEqual(ProjectService.filter(projects, query: "parten").map(\.id), [clip.id])
@@ -71,8 +71,8 @@ final class ProjectServiceTests: CreativoTestCase {
     }
 
     func testSortedByRecencyPutsMostRecentFirst() throws {
-        let old = ProjectService.create(name: "Ancien", type: .blank, in: context)
-        let recent = ProjectService.create(name: "Récent", type: .blank, in: context)
+        let old = ProjectService.create(name: "Ancien", type: .blank, context: context)
+        let recent = ProjectService.create(name: "Récent", type: .blank, context: context)
         old.touch(Date(timeIntervalSince1970: 1_000))
         recent.touch(Date(timeIntervalSince1970: 2_000))
 

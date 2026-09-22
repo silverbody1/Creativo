@@ -47,7 +47,7 @@ struct LocationsLibraryView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    locationBeingEdited = LibraryService.createLocation(in: modelContext)
+                    locationBeingEdited = LibraryService.createLocation(context: modelContext)
                 } label: {
                     Label("Nouveau lieu", systemImage: "plus")
                 }
@@ -66,7 +66,7 @@ struct LocationsLibraryView: View {
             tint: .pink
         ) {
             Button {
-                locationBeingEdited = LibraryService.createLocation(in: modelContext)
+                locationBeingEdited = LibraryService.createLocation(context: modelContext)
             } label: {
                 Label("Ajouter un lieu", systemImage: "plus")
                     .touchTarget()

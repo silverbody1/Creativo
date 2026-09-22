@@ -69,7 +69,7 @@ struct PeopleLibraryView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    personBeingEdited = LibraryService.createPerson(in: modelContext)
+                    personBeingEdited = LibraryService.createPerson(context: modelContext)
                 } label: {
                     Label("Nouvelle personne", systemImage: "plus")
                 }
@@ -88,7 +88,7 @@ struct PeopleLibraryView: View {
             tint: .indigo
         ) {
             Button {
-                personBeingEdited = LibraryService.createPerson(in: modelContext)
+                personBeingEdited = LibraryService.createPerson(context: modelContext)
             } label: {
                 Label("Ajouter une personne", systemImage: "plus")
                     .touchTarget()

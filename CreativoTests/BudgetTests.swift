@@ -102,7 +102,7 @@ final class BudgetTests: CreativoTestCase {
     // MARK: Through the project
 
     func testProjectBudgetSummaryReactsToLineChanges() throws {
-        let project = ProjectService.create(name: "Budget", type: .blank, targetBudget: 1_000, in: context)
+        let project = ProjectService.create(name: "Budget", type: .blank, targetBudget: 1_000, context: context)
         XCTAssertEqual(project.budgetSummary.forecast, 0)
 
         let line = BudgetService.create(
@@ -112,40 +112,40 @@ final class BudgetTests: CreativoTestCase {
             quantity: 1,
             unitPrice: 200,
             numberOfDays: 2,
-            in: context
+            context: context
         )
         XCTAssertEqual(project.budgetSummary.forecast, 400)
 
         line.numberOfDays = 3
-        BudgetService.commitEdits(to: line, in: context)
+        BudgetService.commitEdits(to: line, context: context)
         XCTAssertEqual(project.budgetSummary.forecast, 600)
 
-        BudgetService.delete(line, in: context)
+        BudgetService.delete(line, context: context)
         XCTAssertEqual(project.budgetSummary.forecast, 0)
     }
 
     func testBudgetServiceClampsQuantityAndDaysToAtLeastOne() throws {
-        let project = ProjectService.create(name: "Budget", type: .blank, in: context)
-        let line = BudgetService.create(in: project, title: "Ligne", quantity: 0, unitPrice: 50, numberOfDays: 0, in: context)
+        let project = ProjectService.create(name: "Budget", type: .blank, context: context)
+        let line = BudgetService.create(in: project, title: "Ligne", quantity: 0, unitPrice: 50, numberOfDays: 0, context: context)
 
         XCTAssertEqual(line.quantity, 1)
         XCTAssertEqual(line.numberOfDays, 1)
 
         line.quantity = -5
         line.numberOfDays = 0
-        BudgetService.commitEdits(to: line, in: context)
+        BudgetService.commitEdits(to: line, context: context)
 
         XCTAssertEqual(line.quantity, 1)
         XCTAssertEqual(line.numberOfDays, 1)
     }
 
     func testSetTargetTreatsZeroAsNoEnvelope() throws {
-        let project = ProjectService.create(name: "Budget", type: .blank, in: context)
+        let project = ProjectService.create(name: "Budget", type: .blank, context: context)
 
-        BudgetService.setTarget(5_000, on: project, in: context)
+        BudgetService.setTarget(5_000, on: project, context: context)
         XCTAssertEqual(project.targetBudget, 5_000)
 
-        BudgetService.setTarget(0, on: project, in: context)
+        BudgetService.setTarget(0, on: project, context: context)
         XCTAssertNil(project.targetBudget)
     }
 }

@@ -67,7 +67,7 @@ struct EquipmentLibraryView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    itemBeingEdited = LibraryService.createEquipment(in: modelContext)
+                    itemBeingEdited = LibraryService.createEquipment(context: modelContext)
                 } label: {
                     Label("Nouveau matériel", systemImage: "plus")
                 }
@@ -86,7 +86,7 @@ struct EquipmentLibraryView: View {
             tint: .teal
         ) {
             Button {
-                itemBeingEdited = LibraryService.createEquipment(in: modelContext)
+                itemBeingEdited = LibraryService.createEquipment(context: modelContext)
             } label: {
                 Label("Ajouter du matériel", systemImage: "plus")
                     .touchTarget()

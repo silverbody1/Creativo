@@ -84,7 +84,7 @@ struct LocationEditorSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminé") {
                         location.touch()
-                        LibraryService.commitEdits(in: modelContext)
+                        LibraryService.commitEdits(context: modelContext)
                         dismiss()
                     }
                     .keyboardShortcut(.defaultAction)
@@ -92,7 +92,7 @@ struct LocationEditorSheet: View {
             }
             .confirmationDialog("Supprimer ce lieu ?", isPresented: $isConfirmingDeletion) {
                 Button("Supprimer", role: .destructive) {
-                    LibraryService.deleteLocation(location, in: modelContext)
+                    LibraryService.deleteLocation(location, context: modelContext)
                     dismiss()
                 }
                 Button("Annuler", role: .cancel) {}

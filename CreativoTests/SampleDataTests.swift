@@ -40,7 +40,7 @@ final class SampleDataTests: CreativoTestCase {
     }
 
     func testEmptyProjectSurfacesEveryPreparationGap() throws {
-        let project = ProjectService.create(name: "Vide", type: .blank, in: context)
+        let project = ProjectService.create(name: "Vide", type: .blank, context: context)
         let ids = Set(ProjectInsights.insights(for: project).map(\.id))
 
         XCTAssertTrue(ids.contains("no-scenes"))
@@ -53,7 +53,7 @@ final class SampleDataTests: CreativoTestCase {
 
     func testSampleProjectHasFewerGapsThanAnEmptyOne() throws {
         let sample = SampleData.populate(context)
-        let empty = ProjectService.create(name: "Vide", type: .blank, in: context)
+        let empty = ProjectService.create(name: "Vide", type: .blank, context: context)
 
         let sampleGaps = ProjectInsights.insights(for: sample).count
         let emptyGaps = ProjectInsights.insights(for: empty).count

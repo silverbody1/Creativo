@@ -124,7 +124,7 @@ struct SceneEditorView: View {
                 }
             }
             Button {
-                shotBeingEdited = ShotService.create(in: scene, in: modelContext)
+                shotBeingEdited = ShotService.create(in: scene, context: modelContext)
             } label: {
                 Label("Ajouter un plan", systemImage: "plus")
             }

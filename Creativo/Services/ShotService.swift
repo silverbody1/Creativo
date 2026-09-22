@@ -9,7 +9,7 @@ enum ShotService {
         title: String = "",
         shotSize: ShotSize = .medium,
         cameraMovement: CameraMovement = .fixed,
-        in context: ModelContext
+        context: ModelContext
     ) -> Shot {
         let nextIndex = (scene.shots.map(\.orderIndex).max() ?? -1) + 1
         let shot = Shot(
@@ -26,7 +26,7 @@ enum ShotService {
         return shot
     }
 
-    static func delete(_ shot: Shot, in context: ModelContext) {
+    static func delete(_ shot: Shot, context: ModelContext) {
         let scene = shot.scene
         context.delete(shot)
         if let scene {
@@ -36,7 +36,7 @@ enum ShotService {
         PersistenceActions.save(context)
     }
 
-    static func setStatus(_ status: ShotStatus, on shot: Shot, in context: ModelContext) {
+    static func setStatus(_ status: ShotStatus, on shot: Shot, context: ModelContext) {
         guard shot.status != status else { return }
         shot.status = status
         shot.touch()
@@ -44,7 +44,7 @@ enum ShotService {
     }
 
     /// Cycles planned → ready → shot → planned, for one-tap progress on iPad.
-    static func advanceStatus(of shot: Shot, in context: ModelContext) {
+    static func advanceStatus(of shot: Shot, context: ModelContext) {
         let next: ShotStatus
         switch shot.status {
         case .planned: next = .ready
@@ -52,7 +52,7 @@ enum ShotService {
         case .shot: next = .planned
         case .cancelled: next = .planned
         }
-        setStatus(next, on: shot, in: context)
+        setStatus(next, on: shot, context: context)
     }
 
     static func move(
@@ -67,7 +67,7 @@ enum ShotService {
         PersistenceActions.save(context)
     }
 
-    static func shift(_ shot: Shot, by delta: Int, in context: ModelContext) {
+    static func shift(_ shot: Shot, by delta: Int, context: ModelContext) {
         guard let scene = shot.scene else { return }
         var ordered = scene.sortedShots
         guard let currentIndex = ordered.firstIndex(where: { $0.id == shot.id }) else { return }
@@ -82,7 +82,7 @@ enum ShotService {
         apply(order: scene.sortedShots, in: scene)
     }
 
-    static func commitEdits(to shot: Shot, in context: ModelContext) {
+    static func commitEdits(to shot: Shot, context: ModelContext) {
         shot.touch()
         PersistenceActions.save(context)
     }

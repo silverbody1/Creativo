@@ -155,7 +155,7 @@ struct HomeView: View {
                     project: project,
                     onOpen: { appState.open(project) },
                     onToggleFavorite: {
-                        ProjectService.toggleFavorite(project, in: modelContext)
+                        ProjectService.toggleFavorite(project, context: modelContext)
                     }
                 )
             }

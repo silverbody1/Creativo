@@ -60,7 +60,7 @@ struct ProjectLocationsView: View {
                 items: availableLocations,
                 searchText: { $0.searchHaystack },
                 onSelect: { location in
-                    LibraryService.attach(location, to: project, in: modelContext)
+                    LibraryService.attach(location, to: project, context: modelContext)
                 },
                 row: { LocationRow(location: $0) }
             )
@@ -74,7 +74,7 @@ struct ProjectLocationsView: View {
             presenting: locationPendingDetach
         ) { location in
             Button("Retirer", role: .destructive) {
-                LibraryService.detach(location, from: project, in: modelContext)
+                LibraryService.detach(location, from: project, context: modelContext)
                 locationPendingDetach = nil
             }
             Button("Annuler", role: .cancel) { locationPendingDetach = nil }
@@ -152,8 +152,8 @@ struct ProjectLocationsView: View {
     }
 
     private func createAndAttach() {
-        let location = LibraryService.createLocation(in: modelContext)
-        LibraryService.attach(location, to: project, in: modelContext)
+        let location = LibraryService.createLocation(context: modelContext)
+        LibraryService.attach(location, to: project, context: modelContext)
         locationBeingEdited = location
     }
 }

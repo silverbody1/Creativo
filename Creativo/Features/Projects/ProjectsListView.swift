@@ -99,7 +99,7 @@ struct ProjectsListView: View {
         ) { project in
             Button("Supprimer définitivement", role: .destructive) {
                 appState.closeIfOpened(project)
-                ProjectService.delete(project, in: modelContext)
+                ProjectService.delete(project, context: modelContext)
                 projectPendingDeletion = nil
             }
             Button("Annuler", role: .cancel) {
@@ -134,7 +134,7 @@ struct ProjectsListView: View {
                     ProjectCard(
                         project: project,
                         onOpen: { appState.open(project) },
-                        onToggleFavorite: { ProjectService.toggleFavorite(project, in: modelContext) }
+                        onToggleFavorite: { ProjectService.toggleFavorite(project, context: modelContext) }
                     )
                     .contextMenu { contextMenu(for: project) }
                 }
@@ -163,7 +163,7 @@ struct ProjectsListView: View {
                 }
                 .swipeActions(edge: .leading) {
                     Button {
-                        ProjectService.toggleFavorite(project, in: modelContext)
+                        ProjectService.toggleFavorite(project, context: modelContext)
                     } label: {
                         Label("Favori", systemImage: project.isFavorite ? "star.slash" : "star")
                     }
@@ -177,12 +177,12 @@ struct ProjectsListView: View {
     private func contextMenu(for project: Project) -> some View {
         Button("Ouvrir") { appState.open(project) }
         Button(project.isFavorite ? "Retirer des favoris" : "Ajouter aux favoris") {
-            ProjectService.toggleFavorite(project, in: modelContext)
+            ProjectService.toggleFavorite(project, context: modelContext)
         }
         Menu("Statut") {
             ForEach(ProjectStatus.allCases) { status in
                 Button {
-                    ProjectService.setStatus(status, on: project, in: modelContext)
+                    ProjectService.setStatus(status, on: project, context: modelContext)
                 } label: {
                     Label(status.displayName, systemImage: status.symbolName)
                 }

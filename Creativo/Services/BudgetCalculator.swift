@@ -105,7 +105,7 @@ enum BudgetService {
         quantity: Int = 1,
         unitPrice: Decimal = 0,
         numberOfDays: Int = 1,
-        in context: ModelContext
+        context: ModelContext
     ) -> BudgetLine {
         let line = BudgetLine(
             category: category,
@@ -121,20 +121,20 @@ enum BudgetService {
         return line
     }
 
-    static func delete(_ line: BudgetLine, in context: ModelContext) {
+    static func delete(_ line: BudgetLine, context: ModelContext) {
         let project = line.project
         context.delete(line)
         project?.touch()
         PersistenceActions.save(context)
     }
 
-    static func setTarget(_ target: Decimal?, on project: Project, in context: ModelContext) {
+    static func setTarget(_ target: Decimal?, on project: Project, context: ModelContext) {
         project.targetBudget = (target ?? 0) > 0 ? target : nil
         project.touch()
         PersistenceActions.save(context)
     }
 
-    static func commitEdits(to line: BudgetLine, in context: ModelContext) {
+    static func commitEdits(to line: BudgetLine, context: ModelContext) {
         line.quantity = max(line.quantity, 1)
         line.numberOfDays = max(line.numberOfDays, 1)
         line.touch()

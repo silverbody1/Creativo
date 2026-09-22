@@ -65,7 +65,7 @@ struct ShotEditorSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminé") {
-                        ShotService.commitEdits(to: shot, in: modelContext)
+                        ShotService.commitEdits(to: shot, context: modelContext)
                         dismiss()
                     }
                     .keyboardShortcut(.defaultAction)
@@ -76,7 +76,7 @@ struct ShotEditorSheet: View {
                 isPresented: $isConfirmingDeletion
             ) {
                 Button("Supprimer", role: .destructive) {
-                    ShotService.delete(shot, in: modelContext)
+                    ShotService.delete(shot, context: modelContext)
                     dismiss()
                 }
                 Button("Annuler", role: .cancel) {}

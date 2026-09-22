@@ -57,7 +57,7 @@ struct ProjectSettingsSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminé") {
-                        ProjectService.commitEdits(to: project, in: modelContext)
+                        ProjectService.commitEdits(to: project, context: modelContext)
                         dismiss()
                     }
                     .keyboardShortcut(.defaultAction)

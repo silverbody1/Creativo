@@ -12,7 +12,7 @@ enum ScheduleService {
         in project: Project,
         date: Date = .now,
         title: String = "",
-        in context: ModelContext
+        context: ModelContext
     ) -> ShootDay {
         let day = ShootDay(
             date: Calendar.current.startOfDay(for: date),
@@ -27,14 +27,14 @@ enum ScheduleService {
         return day
     }
 
-    static func delete(_ day: ShootDay, in context: ModelContext) {
+    static func delete(_ day: ShootDay, context: ModelContext) {
         let project = day.project
         context.delete(day)
         project?.touch()
         PersistenceActions.save(context)
     }
 
-    static func commitEdits(to day: ShootDay, in context: ModelContext) {
+    static func commitEdits(to day: ShootDay, context: ModelContext) {
         day.date = Calendar.current.startOfDay(for: day.date)
         day.touch()
         PersistenceActions.save(context)

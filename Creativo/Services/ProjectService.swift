@@ -13,7 +13,7 @@ enum ProjectService {
         targetBudget: Decimal? = nil,
         status: ProjectStatus = .idea,
         synopsis: String = "",
-        in context: ModelContext
+        context: ModelContext
     ) -> Project {
         let trimmedName = name.trimmed
         let project = Project(
@@ -32,7 +32,7 @@ enum ProjectService {
     ///
     /// Library entities are untouched: SwiftData nullifies the link and the
     /// person, location or equipment stays available for other productions.
-    static func delete(_ project: Project, in context: ModelContext) {
+    static func delete(_ project: Project, context: ModelContext) {
         if let coverPath = project.coverImagePath {
             MediaStore.shared.removeFile(relativePath: coverPath)
         }
@@ -45,13 +45,13 @@ enum ProjectService {
         PersistenceActions.save(context)
     }
 
-    static func toggleFavorite(_ project: Project, in context: ModelContext) {
+    static func toggleFavorite(_ project: Project, context: ModelContext) {
         project.isFavorite.toggle()
         project.touch()
         PersistenceActions.save(context)
     }
 
-    static func setStatus(_ status: ProjectStatus, on project: Project, in context: ModelContext) {
+    static func setStatus(_ status: ProjectStatus, on project: Project, context: ModelContext) {
         guard project.status != status else { return }
         project.status = status
         project.touch()
@@ -59,7 +59,7 @@ enum ProjectService {
     }
 
     /// Records an edit made through a form and stamps the modification date.
-    static func commitEdits(to project: Project, in context: ModelContext) {
+    static func commitEdits(to project: Project, context: ModelContext) {
         project.touch()
         PersistenceActions.save(context)
     }

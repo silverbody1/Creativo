@@ -69,7 +69,7 @@ struct PersonEditorSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminé") {
                         person.touch()
-                        LibraryService.commitEdits(in: modelContext)
+                        LibraryService.commitEdits(context: modelContext)
                         dismiss()
                     }
                     .keyboardShortcut(.defaultAction)
@@ -77,7 +77,7 @@ struct PersonEditorSheet: View {
             }
             .confirmationDialog("Supprimer cette personne ?", isPresented: $isConfirmingDeletion) {
                 Button("Supprimer", role: .destructive) {
-                    LibraryService.deletePerson(person, in: modelContext)
+                    LibraryService.deletePerson(person, context: modelContext)
                     dismiss()
                 }
                 Button("Annuler", role: .cancel) {}

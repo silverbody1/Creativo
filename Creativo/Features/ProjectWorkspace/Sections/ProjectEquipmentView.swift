@@ -68,7 +68,7 @@ struct ProjectEquipmentView: View {
                 items: availableEquipment,
                 searchText: { $0.searchHaystack },
                 onSelect: { item in
-                    LibraryService.assign(item, to: project, in: modelContext)
+                    LibraryService.assign(item, to: project, context: modelContext)
                 },
                 row: { EquipmentRow(item: $0) }
             )
@@ -110,12 +110,12 @@ struct ProjectEquipmentView: View {
                             Button("Modifier l'affectation") { assignmentBeingEdited = assignment }
                             Divider()
                             Button("Retirer du projet", role: .destructive) {
-                                LibraryService.unassign(assignment, in: modelContext)
+                                LibraryService.unassign(assignment, context: modelContext)
                             }
                         }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
-                                LibraryService.unassign(assignment, in: modelContext)
+                                LibraryService.unassign(assignment, context: modelContext)
                             } label: {
                                 Label("Retirer", systemImage: "minus.circle")
                             }
@@ -173,8 +173,8 @@ struct ProjectEquipmentView: View {
     }
 
     private func createAndAssign() {
-        let item = LibraryService.createEquipment(in: modelContext)
-        LibraryService.assign(item, to: project, in: modelContext)
+        let item = LibraryService.createEquipment(context: modelContext)
+        LibraryService.assign(item, to: project, context: modelContext)
         itemBeingCreated = item
     }
 }
@@ -224,7 +224,7 @@ struct EquipmentAssignmentSheet: View {
 
                 Section {
                     Button("Retirer du projet", role: .destructive) {
-                        LibraryService.unassign(assignment, in: modelContext)
+                        LibraryService.unassign(assignment, context: modelContext)
                         dismiss()
                     }
                     Text("Le matériel reste dans la bibliothèque.")
@@ -239,7 +239,7 @@ struct EquipmentAssignmentSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminé") {
                         assignment.project?.touch()
-                        LibraryService.commitEdits(in: modelContext)
+                        LibraryService.commitEdits(context: modelContext)
                         dismiss()
                     }
                     .keyboardShortcut(.defaultAction)

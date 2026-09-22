@@ -50,7 +50,7 @@ struct ShootDayEditorSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminé") {
-                        ScheduleService.commitEdits(to: day, in: modelContext)
+                        ScheduleService.commitEdits(to: day, context: modelContext)
                         dismiss()
                     }
                     .keyboardShortcut(.defaultAction)
@@ -58,7 +58,7 @@ struct ShootDayEditorSheet: View {
             }
             .confirmationDialog("Supprimer cette journée ?", isPresented: $isConfirmingDeletion) {
                 Button("Supprimer", role: .destructive) {
-                    ScheduleService.delete(day, in: modelContext)
+                    ScheduleService.delete(day, context: modelContext)
                     dismiss()
                 }
                 Button("Annuler", role: .cancel) {}

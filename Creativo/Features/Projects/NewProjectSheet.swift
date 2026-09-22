@@ -142,7 +142,7 @@ struct NewProjectSheet: View {
             name: name,
             type: type,
             targetBudget: targetBudget,
-            in: modelContext
+            context: modelContext
         )
         dismiss()
         if openAfterCreation {

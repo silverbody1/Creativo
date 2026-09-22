@@ -68,7 +68,7 @@ struct ProjectOverviewView: View {
                     .font(.system(.title, design: .rounded, weight: .semibold))
                     .lineLimit(2)
                 Button {
-                    ProjectService.toggleFavorite(project, in: modelContext)
+                    ProjectService.toggleFavorite(project, context: modelContext)
                 } label: {
                     Image(systemName: project.isFavorite ? "star.fill" : "star")
                         .foregroundStyle(project.isFavorite ? Color.yellow : Color.secondary)
@@ -104,7 +104,7 @@ struct ProjectOverviewView: View {
         Menu {
             ForEach(ProjectStatus.allCases) { status in
                 Button {
-                    ProjectService.setStatus(status, on: project, in: modelContext)
+                    ProjectService.setStatus(status, on: project, context: modelContext)
                 } label: {
                     Label(status.displayName, systemImage: status.symbolName)
                 }

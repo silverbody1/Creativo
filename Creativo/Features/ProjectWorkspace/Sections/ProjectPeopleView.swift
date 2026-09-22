@@ -69,7 +69,7 @@ struct ProjectPeopleView: View {
                 items: availablePeople,
                 searchText: { $0.searchHaystack },
                 onSelect: { person in
-                    LibraryService.assign(person, to: project, in: modelContext)
+                    LibraryService.assign(person, to: project, context: modelContext)
                 },
                 row: { PersonRow(person: $0) }
             )
@@ -111,12 +111,12 @@ struct ProjectPeopleView: View {
                             Button("Modifier l'affectation") { assignmentBeingEdited = assignment }
                             Divider()
                             Button("Retirer du projet", role: .destructive) {
-                                LibraryService.unassign(assignment, in: modelContext)
+                                LibraryService.unassign(assignment, context: modelContext)
                             }
                         }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
-                                LibraryService.unassign(assignment, in: modelContext)
+                                LibraryService.unassign(assignment, context: modelContext)
                             } label: {
                                 Label("Retirer", systemImage: "person.badge.minus")
                             }
@@ -174,8 +174,8 @@ struct ProjectPeopleView: View {
     }
 
     private func createAndAssign() {
-        let person = LibraryService.createPerson(in: modelContext)
-        LibraryService.assign(person, to: project, in: modelContext)
+        let person = LibraryService.createPerson(context: modelContext)
+        LibraryService.assign(person, to: project, context: modelContext)
         personBeingCreated = person
     }
 }
@@ -229,7 +229,7 @@ struct PersonAssignmentSheet: View {
 
                 Section {
                     Button("Retirer du projet", role: .destructive) {
-                        LibraryService.unassign(assignment, in: modelContext)
+                        LibraryService.unassign(assignment, context: modelContext)
                         dismiss()
                     }
                     Text("La personne reste dans la bibliothèque.")
@@ -244,7 +244,7 @@ struct PersonAssignmentSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Terminé") {
                         assignment.project?.touch()
-                        LibraryService.commitEdits(in: modelContext)
+                        LibraryService.commitEdits(context: modelContext)
                         dismiss()
                     }
                     .keyboardShortcut(.defaultAction)
