@@ -1,8 +1,8 @@
 # Feuille de route
 
-Seize phases. Deux sont livrées. Les suivantes sont décrites pour que
-l'architecture actuelle ne les rende jamais difficiles à ajouter, **pas** pour
-être développées par anticipation.
+Seize phases. Deux sont livrées, une troisième attend sa validation. Les
+suivantes sont décrites pour que l'architecture actuelle ne les rende jamais
+difficiles à ajouter, **pas** pour être développées par anticipation.
 
 ---
 
@@ -46,17 +46,28 @@ import et export Fountain.
 
 ---
 
-## 3. Music Video Timeline
+## 3. Music Video Timeline 🔶 implémentée, validation en attente
 
-La structure du morceau existe depuis la phase 2 ; il lui manque le son.
+Le morceau et la préparation au même endroit, pour les projets de type clip.
 
-- Import d'un fichier audio dans le projet.
-- Forme d'onde et marqueurs posés sur la timeline.
-- Calage des sections existantes sur la forme d'onde, par glissement.
-- Paroles synchronisées ligne à ligne.
+- Import du master en WAV, AIFF, MP3 ou M4A, copié dans le projet ; remplacement et retrait avec confirmation.
+- Forme d'onde réelle extraite du fichier, mise en cache sur disque, dessinée en tuiles pour rester fluide sur un morceau de plusieurs minutes.
+- Transport complet : lecture, pause, retour au début, saut fin et large, scrubbing, timecode à la milliseconde.
+- Tête de lecture déplaçable, zoom horizontal, défilement, « voir tout le morceau », pincement sur iPad.
+- Sections de la phase 2 posées sur le morceau, frontières déplaçables avec aimant, sans durée négative ni chevauchement.
+- Repères typés : impact, parole, caméra, note.
+- Inspecteur de section relié aux mêmes données que l'éditeur d'écriture, avec les plans de la scène.
+- Vue structure du morceau, cliquable.
 
-*S'appuie sur* : AVFoundation, `MediaStore`, et les timecodes déjà saisis dans
-`MusicVideoFacet.startTime` / `endTime`, qui seront repris tels quels.
+Une section reste une `StoryScene` et son minutage reste sur `MusicVideoFacet` :
+il n'existe toujours qu'une seule copie du timing. Voir
+[ARCHITECTURE.md](ARCHITECTURE.md).
+
+La phase passera en ✅ livrée quand un build macOS et la suite de tests auront
+été validés sur une machine Apple.
+
+Reste pour plus tard : synchronisation des paroles ligne à ligne, détection
+automatique de la structure, BPM.
 
 ---
 

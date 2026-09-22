@@ -70,6 +70,27 @@ enum AppFormat {
         return String(format: "%02d:%02d", minutes, secs)
     }
 
+    /// `01:17.420`, the precision a timeline needs. Frames would be false
+    /// precision here: there is no picture yet, only a track.
+    static func preciseTimecode(_ seconds: TimeInterval) -> String {
+        let safe = max(seconds, 0)
+        let total = Int(safe)
+        let hours = total / 3600
+        let minutes = (total % 3600) / 60
+        let secs = total % 60
+        let milliseconds = Int(((safe - Double(total)) * 1000).rounded())
+        let clampedMilliseconds = min(milliseconds, 999)
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d.%03d", hours, minutes, secs, clampedMilliseconds)
+        }
+        return String(format: "%02d:%02d.%03d", minutes, secs, clampedMilliseconds)
+    }
+
+    /// `01:17.420 / 03:04.870`
+    static func transportTimecode(_ current: TimeInterval, of total: TimeInterval) -> String {
+        "\(preciseTimecode(current)) / \(preciseTimecode(total))"
+    }
+
     // MARK: Dates
 
     /// `il y a 2 jours`, for "last modified" labels.

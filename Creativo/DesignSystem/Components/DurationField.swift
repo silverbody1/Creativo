@@ -3,6 +3,10 @@ import SwiftUI
 /// Minutes and seconds entry, bound to a `TimeInterval` in seconds.
 struct DurationField: View {
     @Binding var duration: TimeInterval
+    /// Optional focus flag shared with the host screen. A timeline that binds
+    /// the space bar and the arrow keys needs to know when the keyboard
+    /// belongs to a text field instead.
+    var focus: FocusState<Bool>.Binding?
 
     private var minutes: Binding<Int> {
         Binding(
@@ -27,17 +31,21 @@ struct DurationField: View {
 
     var body: some View {
         HStack(spacing: Spacing.sm) {
-            TextField("0", value: minutes, format: .number)
-                .frame(width: 54)
-                .multilineTextAlignment(.trailing)
-                .numericKeyboard()
+            focusable(
+                TextField("0", value: minutes, format: .number)
+                    .frame(width: 54)
+                    .multilineTextAlignment(.trailing)
+                    .numericKeyboard()
+            )
             Text("min")
                 .foregroundStyle(.secondary)
 
-            TextField("0", value: seconds, format: .number)
-                .frame(width: 54)
-                .multilineTextAlignment(.trailing)
-                .numericKeyboard()
+            focusable(
+                TextField("0", value: seconds, format: .number)
+                    .frame(width: 54)
+                    .multilineTextAlignment(.trailing)
+                    .numericKeyboard()
+            )
             Text("s")
                 .foregroundStyle(.secondary)
 
@@ -46,6 +54,15 @@ struct DurationField: View {
             Text(AppFormat.timecode(duration))
                 .font(.callout.monospacedDigit())
                 .foregroundStyle(.tertiary)
+        }
+    }
+
+    @ViewBuilder
+    private func focusable(_ field: some View) -> some View {
+        if let focus {
+            field.focused(focus)
+        } else {
+            field
         }
     }
 }

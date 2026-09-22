@@ -6,7 +6,7 @@ Creativo couvre la chaîne complète d'un projet vidéo — idée, écriture, sc
 découpage, plans, lieux, équipe, matériel, budget, planning — dans une seule
 application SwiftUI partagée entre **macOS** et **iPadOS**.
 
-Ce dépôt contient les phases **1 — Fondations** et **2 — Écriture professionnelle**.
+Ce dépôt contient les phases **1 — Fondations**, **2 — Écriture professionnelle** et **3 — Timeline de clip**.
 
 ## Prérequis
 
@@ -54,6 +54,7 @@ Rien n'est simulé.
 - **Workspace de projet** — barre latérale interne avec compteurs, onze sections.
 - **Vue d'ensemble** — identité du projet, six cartes de chiffres clés, liste « À préparer » déduite des données.
 - **Écriture** — trois surfaces selon le type de projet : éditeur de scénario, script YouTube, structure de clip. Mode focus, annuler/refaire, autosave.
+- **Timeline** (projets de type clip) — import du master, forme d'onde réelle, transport, tête de lecture, zoom, sections posées sur le morceau, repères, inspecteur relié aux mêmes données que l'écriture.
 - **Scènes** — création, édition, réordonnancement, renumérotation, recherche, suppression confirmée.
 - **Plans** — regroupés par scène, progression « X / Y plans tournés », statut en un clic, réordonnancement.
 - **Budget** — cible, prévisionnel, dépensé, restant, lignes groupées par catégorie, TVA, montant réellement payé, écart.
@@ -78,6 +79,13 @@ Rien n'est simulé.
 | ⌘1 … ⌘6 | Type de la ligne de scénario en cours |
 | ⌘↩ | Nouvelle ligne de scénario |
 | Échap | Quitter le mode focus |
+| Espace | Lecture / pause sur la timeline |
+| ← / → | Déplacement image par image |
+| ⇧← / ⇧→ | Déplacement de cinq secondes |
+| Début | Retour au début du morceau |
+| M | Poser un repère à la tête de lecture |
+| ⌘⇧S | Ajouter une section à la tête de lecture |
+| ⌘+ / ⌘− / ⌘0 | Zoomer, dézoomer, voir tout le morceau |
 
 ## Ce qui n'est pas encore là
 
@@ -95,7 +103,7 @@ Creativo/
   Core/             persistance et état de navigation
   DesignSystem/     jetons visuels et composants réutilisables
   Models/           entités SwiftData et énumérations du domaine
-  Features/         un dossier par écran, dont Writing/ et ses trois surfaces
+  Features/         un dossier par écran, dont Writing/ et Timeline/
   Services/         règles métier, sans SwiftUI
   Utilities/        formatage, bindings, adaptations par plateforme
   PreviewContent/   données de démonstration

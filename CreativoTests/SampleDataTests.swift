@@ -11,7 +11,10 @@ final class SampleDataTests: CreativoTestCase {
         XCTAssertEqual(project.name, "PARTENAIRE")
         XCTAssertEqual(project.type, .musicVideo)
         XCTAssertEqual(project.status, .preProduction)
-        XCTAssertEqual(project.sortedScenes.map(\.title), ["Intro", "Couplet 1", "Refrain 1", "Couplet 2", "Refrain 2"])
+        XCTAssertEqual(
+            project.sortedScenes.map(\.title),
+            ["Intro", "Couplet 1", "Refrain 1", "Couplet 2", "Refrain 2", "Outro"]
+        )
         XCTAssertFalse(project.allShots.isEmpty)
         XCTAssertFalse(project.budgetLines.isEmpty)
         XCTAssertFalse(project.peopleAssignments.isEmpty)
@@ -31,6 +34,51 @@ final class SampleDataTests: CreativoTestCase {
         let projects = try fetchAll(Project.self)
         XCTAssertEqual(projects.count, 3)
         XCTAssertEqual(Set(projects.map(\.type)), [.musicVideo, .film, .youtube])
+    }
+
+    func testSampleClipIsPlacedOnATimelineWithoutNeedingAnAudioFile() throws {
+        let project = SampleData.populate(context)
+
+        // Every section carries a timecode, in order, with no gap or overlap.
+        let sections = project.timedSections
+        XCTAssertEqual(sections.count, project.musicSections.count)
+        XCTAssertEqual(sections.first?.musicFacet?.startTime, 0)
+
+        for (index, scene) in sections.enumerated() {
+            let facet = try XCTUnwrap(scene.musicFacet)
+            let start = try XCTUnwrap(facet.startTime)
+            let end = try XCTUnwrap(facet.endTime)
+            XCTAssertGreaterThan(end, start, "\(scene.title) a une durée nulle ou négative")
+            if index > 0 {
+                let previousEnd = try XCTUnwrap(sections[index - 1].musicFacet?.endTime)
+                XCTAssertEqual(start, previousEnd, accuracy: 0.001)
+            }
+        }
+
+        // The timeline works with no audio: the sections give it its length.
+        XCTAssertNil(project.primaryAudioAsset)
+        XCTAssertGreaterThan(project.timelineDuration, 0)
+        XCTAssertEqual(project.timelineDuration, sections.last?.musicFacet?.endTime)
+    }
+
+    func testSampleClipCarriesMarkersOfSeveralKinds() throws {
+        let project = SampleData.populate(context)
+
+        XCTAssertGreaterThanOrEqual(project.markers.count, 4)
+        XCTAssertEqual(project.sortedMarkers.map(\.time), project.sortedMarkers.map(\.time).sorted())
+        XCTAssertGreaterThanOrEqual(Set(project.markers.map(\.type)).count, 3)
+        XCTAssertTrue(project.markers.allSatisfy { $0.time <= project.timelineDuration })
+        XCTAssertTrue(project.markers.allSatisfy { !$0.displayTitle.isEmpty })
+    }
+
+    func testTheTimelineSectionOnlyExistsForClips() {
+        XCTAssertTrue(ProjectType.musicVideo.hasAudioTimeline)
+        XCTAssertFalse(ProjectType.film.hasAudioTimeline)
+        XCTAssertTrue(WorkspaceSection.creationGroup(for: .musicVideo).contains(.timeline))
+        XCTAssertFalse(WorkspaceSection.creationGroup(for: .film).contains(.timeline))
+        XCTAssertTrue(WorkspaceSection.isAvailable(.timeline, for: .musicVideo))
+        XCTAssertFalse(WorkspaceSection.isAvailable(.timeline, for: .youtube))
+        XCTAssertTrue(WorkspaceSection.isAvailable(.scenes, for: .film))
     }
 
     func testSampleBudgetProducesACoherentSummary() throws {

@@ -19,7 +19,7 @@ struct ProjectWorkspaceView: View {
                 Divider()
                 List(selection: $appState.workspaceSection) {
                     Section("Création") {
-                        ForEach(WorkspaceSection.creationGroup) { sidebarRow($0) }
+                        ForEach(WorkspaceSection.creationGroup(for: project.type)) { sidebarRow($0) }
                     }
                     Section("Production") {
                         ForEach(WorkspaceSection.productionGroup) { sidebarRow($0) }
@@ -114,6 +114,7 @@ struct ProjectWorkspaceView: View {
         case .schedule: value = project.shootDays.count
         case .documents: value = project.references.count
         case .writing: return project.hasWrittenMaterial ? writingBadge : nil
+        case .timeline: value = project.timedSections.count
         case .overview, .board: return nil
         }
         return value > 0 ? "\(value)" : nil
@@ -149,6 +150,12 @@ struct ProjectWorkspaceView: View {
             ProjectOverviewView(project: project)
         case .writing:
             WritingView(project: project)
+        case .timeline:
+            if project.type.hasAudioTimeline {
+                TimelineView(project: project)
+            } else {
+                ComingSoonSectionView(section: .timeline, project: project)
+            }
         case .scenes:
             SceneListView(project: project)
         case .shots:

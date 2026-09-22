@@ -29,7 +29,9 @@ enum PersistenceController {
             ProjectEquipmentAssignment.self,
             ScreenplayElement.self,
             YouTubeBlock.self,
-            MusicVideoFacet.self
+            MusicVideoFacet.self,
+            ProjectMediaAsset.self,
+            TimelineMarker.self
         ])
     }
 

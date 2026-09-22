@@ -73,6 +73,8 @@ enum SampleData {
         insertBudget(into: project, context: context)
         insertShootDays(into: project, context: context)
 
+        insertMarkers(into: project, context: context)
+
         insertScreenplayProject(into: context, locations: locations)
         insertVideoProject(into: context)
 
@@ -258,7 +260,9 @@ enum SampleData {
             ("Couplet 2", .interior, .night, 46, .draft, locations.studio,
              "Retour studio, cadre plus serré qu'au premier couplet."),
             ("Refrain 2", .exterior, .dawn, 52, .draft, locations.rooftop,
-             "Même axe que le premier refrain mais la lumière a basculé.")
+             "Même axe que le premier refrain mais la lumière a basculé."),
+            ("Outro", .exterior, .dawn, 25, .draft, locations.rooftop,
+             "La ville prend le dessus sur la musique. On s'éloigne, il reste.")
         ]
 
         for (index, definition) in definitions.enumerated() {
@@ -311,6 +315,12 @@ enum SampleData {
                 .chorus, 154, 206, .mixed,
                 "Partenaire, partenaire\nOn se relève ensemble ou pas du tout",
                 "Même axe que le premier refrain mais la lumière a basculé : le jour se lève pendant la prise.",
+                "Manteau long clair"
+            ),
+            "Outro": (
+                .outro, 206, 231, .narrative,
+                "",
+                "Drone qui recule jusqu'à perdre la silhouette dans la ville qui se réveille.",
                 "Manteau long clair"
             )
         ]
@@ -534,6 +544,30 @@ enum SampleData {
             context.insert(element)
         }
         scene.content = ScreenplayFormatter.plainText(for: scene)
+    }
+
+    /// Points of the track worth remembering, placed on the same timings as
+    /// the sections. No audio file is needed: the timeline falls back to a
+    /// placeholder envelope when there is nothing to read.
+    private static func insertMarkers(into project: Project, context: ModelContext) {
+        let definitions: [(TimeInterval, String, TimelineMarkerType, String)] = [
+            (2.5, "Entrée artiste", .camera, "Le visage apparaît par la droite, une seule source."),
+            (22, "Première syllabe", .lyric, "Le texte démarre pile sur la coupe."),
+            (70, "Drop", .beat, "Passage au rooftop, changement de rythme."),
+            (108, "Changement lumière", .camera, "Bascule studio, service lumière n° 2."),
+            (154.5, "« partenaire »", .lyric, "Impact lyric du dernier refrain."),
+            (206, "Lever de jour", .note, "Fenêtre golden hour très courte, un seul essai.")
+        ]
+        for definition in definitions {
+            let marker = TimelineMarker(
+                time: definition.0,
+                title: definition.1,
+                type: definition.2,
+                notes: definition.3
+            )
+            marker.project = project
+            context.insert(marker)
+        }
     }
 
     /// A YouTube project, so the third writing surface is populated too.

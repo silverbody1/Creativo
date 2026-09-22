@@ -25,6 +25,7 @@ Creativo/
 │   ├── Persistence/
 │   │   ├── PersistenceController.swift   schéma et fabriques de conteneurs
 │   │   └── MediaStore.swift              dossier des médias importés
+│   ├── Audio/                            lecture, extraction et cache waveform
 │   └── Navigation/
 │       ├── AppState.swift                état de navigation observable
 │       ├── SidebarDestination.swift      sections de la coquille
@@ -36,11 +37,15 @@ Creativo/
 │   ├── ScreenplayStyle.swift    typographie et marges du format scénario
 │   └── Components/              EmptyStateView, StatCard, Chip, SectionHeaderView, …
 ├── Models/                      entités SwiftData + énumérations
-│   └── Writing/                 modes d'écriture et facettes
+│   ├── Writing/                 modes d'écriture et facettes
+│   ├── Media/                   fichiers importés dans un projet
+│   └── Timeline/                repères temporels
 ├── Features/                    un dossier par écran
-│   └── Writing/                 les trois surfaces d'écriture
+│   ├── Writing/                 les trois surfaces d'écriture
+│   └── Timeline/                la timeline du clip
 ├── Services/                    règles métier pures, sans SwiftUI
-│   └── Writing/                 scénario, script vidéo, structure de clip
+│   ├── Writing/                 scénario, script vidéo, structure de clip
+│   └── Timeline/                géométrie, aimant, médias, sections
 ├── Utilities/                   formatage, bindings, adaptations plateforme
 └── PreviewContent/SampleData.swift
 ```
@@ -103,6 +108,8 @@ et horodatées par l'appel `commitEdits` correspondant.
 | `ScreenplayElement` | Une ligne typée de scénario | appartient à la scène |
 | `MusicVideoFacet` | La face clip d'une scène | appartient à la scène |
 | `YouTubeBlock` | Un bloc de script vidéo | appartient au projet |
+| `ProjectMediaAsset` | Un fichier importé, par son chemin | appartient au projet |
+| `TimelineMarker` | Un instant repéré sur le morceau | appartient au projet |
 
 ### La bibliothèque globale
 
@@ -245,7 +252,139 @@ exactement comme l'ouverture d'un projet. Les deux barres latérales
 disparaissent et il ne reste que la page. Ce choix évite un `overlay` qui se
 comporterait différemment sur macOS et sur iPadOS.
 
-## 5. Navigation
+## 5. La timeline du clip
+
+La timeline n'est pas un lecteur audio avec des boutons : c'est l'endroit où le
+morceau et la préparation se rencontrent. Elle n'existe que pour les projets de
+type clip (`ProjectType.hasAudioTimeline`), parce qu'une piste audio ne veut
+rien dire pour un scénario.
+
+### Le média n'entre jamais dans le store
+
+`ProjectMediaAsset` garde un chemin **relatif**, une durée, un échantillonnage
+et une taille. Les octets vivent dans `Application Support/Creativo/Media`, où
+l'import les **copie**. Un marque-page vers un fichier resté dans Téléchargements
+est un projet cassé qui s'ignore ; une copie est aussi ce qui rendra l'export
+d'un projet avec ses médias possible.
+
+Le morceau principal est désigné par `Project.primaryAudioAssetID`, un
+identifiant et non une relation : une seconde relation vers
+`ProjectMediaAsset` à côté de `mediaAssets` obligerait SwiftData à deviner
+quelle inverse est laquelle.
+
+### Waveform
+
+```
+fichier audio ──▶ WaveformExtractor ──▶ WaveformSamples ──▶ WaveformCache
+   AVAudioFile      hors MainActor        6 000 crêtes         JSON sur disque
+                                              │
+                                              ▼
+                                   peaks(in:targetCount:)
+                                              │
+                                              ▼
+                                   tuiles Canvas de 480 pt
+```
+
+`AVAudioFile` plutôt qu'`AVAssetReader` : il décode WAV, AIFF, MP3 et AAC vers
+le même format flottant, ce qui réduit l'extracteur à une seule boucle.
+
+L'extraction a lieu **une fois**, à haute résolution, dans une tâche détachée.
+Zoomer ne relit jamais le fichier : la vue demande la tranche qui l'intéresse à
+`peaks(in:targetCount:)`, qui réduit les crêtes stockées au nombre de colonnes
+disponibles. Le max-pooling est délibéré : un transitoire qui disparaît quand on
+dézoome est précisément celui qu'on cherchait.
+
+`WaveformStore` est un acteur : il sert le cache mémoire, puis le cache disque,
+puis extrait, et deux vues qui demandent la même piste en même temps ne
+déclenchent qu'une extraction. Un cache corrompu est jeté et régénéré, jamais
+fatal.
+
+### Système de coordonnées
+
+`TimelineGeometry` est la **seule** conversion entre secondes et points. Règle,
+forme d'onde, sections, repères et tête de lecture passent tous par elle, ce
+qui garantit leur alignement à n'importe quel zoom et rend le tout testable
+sans fenêtre.
+
+| | |
+|---|---|
+| `x(for:)` / `time(forX:)` | conversions, bornées à la piste |
+| `contentWidth` | largeur totale au zoom courant |
+| `rulerStep` / `rulerTicks(in:)` | graduations qui ne se chevauchent jamais |
+| `fittingPixelsPerSecond` | « voir tout le morceau » |
+| `scrollOffset(keeping:atViewportX:)` | zoom ancré plutôt que téléporté |
+
+Le zoom est **exclusivement horizontal** : la hauteur de la forme d'onde ne
+change jamais. Une piste de trois minutes zoomée à fond fait plus de cent mille
+points de large, donc la règle et la forme d'onde sont dessinées en tuiles de
+480 points dans un `LazyHStack` : seules celles à l'écran sont construites.
+
+`TimelineSnapper` est l'aimant. Sa tolérance est donnée en secondes mais
+dérivée du zoom par l'appelant, donc l'aimant fait toujours la même largeur à
+l'écran. Il se désactive d'un bouton.
+
+### Une section de clip reste une scène
+
+Rien n'a changé depuis la phase 2 : une section **est** une `StoryScene`
+portant un `MusicVideoFacet`, et son timing est `startTime` / `endTime` sur ce
+facet. La timeline déplace ces deux nombres, l'éditeur d'écriture les affiche.
+
+```
+        Écriture clip ─┐
+                       ├──▶ MusicVideoFacet.startTime / endTime ◀── une seule copie
+        Timeline ──────┘              │
+                                      ▼
+                            StoryScene ──▶ Shot, lieu, jour de tournage
+```
+
+Déplacer une frontière met donc à jour la fin d'une section et le début de la
+suivante **lorsqu'elles se touchent**, et rien d'autre. `MusicTimelineService`
+borne chaque opération : pas de durée négative, pas de section hors du morceau,
+pas de chevauchement. Ajouter une section à la tête de lecture coupe celle qui
+s'y trouve, ce qui est la seule interprétation raisonnable sur une timeline
+linéaire.
+
+`resequenceByTime` garde `orderIndex` aligné sur l'ordre temporel, pour que la
+liste de l'éditeur d'écriture et la timeline racontent toujours la même
+séquence.
+
+### Repères
+
+`TimelineMarker` est volontairement séparé des scènes. Une entrée de batterie,
+un drop ou un impact de parole est un instant, pas une unité de découpage :
+en faire des scènes remplirait la liste d'objets qui ne porteront jamais de
+plan. Un repère a un temps, un titre, un type et des notes, et cliquer dessus
+déplace la tête de lecture.
+
+### Temps réel contre données persistées
+
+C'est le point critique de cette phase.
+
+| | Où ça vit | Écrit dans SwiftData |
+|---|---|---|
+| Position de lecture | `AudioPlaybackController.currentTime` | **jamais** |
+| Lecture en cours, durée | même contrôleur | jamais |
+| Zoom, défilement, sélection | `@State` de la vue | jamais |
+| Frontière en cours de glissement | `@State` de la piste | seulement au relâchement |
+| Timecodes de section, repères | `MusicVideoFacet`, `TimelineMarker` | oui |
+
+Le contrôleur est `@MainActor @Observable`, et `currentTime` n'est lu que par
+la tête de lecture et par l'affichage du timecode. Un tick redessine donc une
+ligne d'un point et un libellé, pas la timeline. Le glissement d'une frontière
+garde son état dans la vue et n'appelle le service qu'une fois, au relâchement.
+
+L'extraction de forme d'onde, la seule opération coûteuse, part dans une tâche
+détachée et ne touche jamais le MainActor.
+
+### Résilience
+
+Un média peut toujours disparaître. `ProjectMediaAsset.isAvailable` le dit,
+le panneau l'affiche et propose de remplacer le morceau. Remplacer une piste
+par une plus courte ne supprime **aucune** scène : `clampToDuration` ramène
+simplement ce qui dépasse à l'intérieur. Un fichier illisible, un cache
+corrompu ou une extraction interrompue produisent un message, jamais un plantage.
+
+## 6. Navigation
 
 Deux niveaux, chacun étant un `NavigationSplitView` natif :
 
@@ -264,7 +403,7 @@ Chaque section reçoit une `NavigationStack` neuve via `.id(section)`, pour
 qu'un éditeur poussé dans une section ne reste pas affiché après un changement
 de section.
 
-## 6. Adaptation macOS / iPadOS
+## 7. Adaptation macOS / iPadOS
 
 `horizontalSizeClass` n'existe pas sur macOS. Les écrans qui changent de
 disposition mesurent donc la largeur réelle de leur conteneur avec
@@ -284,7 +423,7 @@ Les différences de plateforme sont concentrées dans
 Les cibles tactiles passent par `.touchTarget()`, qui garantit 44 pt de hauteur
 sans changer la taille visuelle.
 
-## 7. Design system
+## 8. Design system
 
 Trois barèmes seulement, pour que toutes les pages se ressemblent :
 
@@ -302,7 +441,7 @@ Tout écran sans contenu utilise `EmptyStateView`, y compris les sections pas
 encore développées : elles expliquent ce qu'elles feront et proposent l'action
 la plus utile en attendant.
 
-## 8. Services
+## 9. Services
 
 | Service | Responsabilité |
 |---|---|
@@ -319,17 +458,26 @@ la plus utile en attendant.
 | `YouTubeScriptService` | blocs de script, repli, promotion en scène |
 | `ScriptMetricsCalculator` | mots et durée estimée — pur |
 | `MusicVideoService` | sections de clip, facettes, distribution |
+| `MusicTimelineService` | placement des sections, frontières, repères |
+| `TimelineGeometry` | conversion temps ↔ points — pur |
+| `TimelineSnapper` | aimantation — pur |
+| `TimelineTiling` | découpage de la timeline en tuiles — pur |
+| `MediaImportService` | import, remplacement et retrait d'un média |
+| `WaveformExtractor` / `WaveformStore` | extraction et cache de forme d'onde |
+| `AudioPlaybackController` | lecture et position, jamais persistées |
 | `PersistenceActions` | enregistrement et journalisation |
 
-`BudgetCalculator`, `ProjectInsights`, `ScreenplayFormatter` et
-`ScriptMetricsCalculator` ne touchent ni à SwiftData ni à SwiftUI : ce sont des
+`BudgetCalculator`, `ProjectInsights`, `ScreenplayFormatter`,
+`ScriptMetricsCalculator`, `TimelineGeometry`, `TimelineSnapper`,
+`TimelineTiling`, `PlaybackMath` et les règles de bornage de
+`MusicTimelineService` ne touchent ni à SwiftData ni à SwiftUI : ce sont des
 fonctions pures, testées directement.
 
 Les totaux ne sont **jamais** stockés. `Project.budgetSummary` est recalculé à
 chaque lecture, si bien qu'éditer une ligne met à jour l'en-tête, le sous-total
 de catégorie et le tableau de bord dans la même image.
 
-## 9. Intégrations prévues
+## 10. Intégrations prévues
 
 L'architecture actuelle ne bloque aucune des intégrations suivantes.
 
@@ -337,12 +485,12 @@ L'architecture actuelle ne bloque aucune des intégrations suivantes.
 |---|---|---|
 | CloudKit | synchronisation multi-appareils | `cloudKitDatabase: .none` à changer en une ligne ; toutes les propriétés ont une valeur par défaut et aucune relation n'est obligatoire, ce qu'exige CloudKit |
 | MapKit | repérage et carte des lieux | `latitude` et `longitude` optionnelles sur `ProductionLocation`, sans import CoreLocation |
-| AVFoundation | timeline musicale, waveform | `estimatedDuration` en secondes sur les scènes |
+| AVFoundation | ✅ en place | lecture, extraction de forme d'onde, sondage des fichiers |
 | PencilKit | storyboard dessiné | `ReferenceAsset` et `MediaStore` référencent des fichiers |
 | PhotosUI | import de couvertures et références | `coverImagePath`, `MediaStore.importFile` |
 | PDFKit | feuilles de service, exports | `ShootDay` relié aux scènes et aux personnes |
 
-## 10. Migrations
+## 11. Migrations
 
 Le schéma n'évolue **que par ajout** : nouvelles entités, nouvelles propriétés
 avec valeur par défaut, nouvelles relations initialisées à vide ou optionnelles.
@@ -360,7 +508,7 @@ Si malgré tout le store refuse de s'ouvrir, `PersistenceController` ne le
 supprime jamais : il le **renomme** avec un horodatage et repart sur un store
 neuf. Les données restent récupérables sur le disque et l'application se lance.
 
-## 11. Conventions pour les prochaines phases
+## 12. Conventions pour les prochaines phases
 
 1. **Une nouvelle entité** s'ajoute dans `Models/`, puis dans
    `PersistenceController.schema`, puis dans `SampleData`. Les trois, sinon les
@@ -385,8 +533,15 @@ neuf. Les données restent récupérables sur le disque et l'application se lanc
 10. **Une nouvelle surface d'écriture** s'ajoute dans `WritingMode`, dans le
     `switch` de `WritingView`, et sous la forme d'une facette accrochée à
     `StoryScene` — jamais d'une liste de scènes parallèle.
+11. **Aucun état temps réel dans SwiftData.** Position de lecture, zoom,
+    défilement et glissement en cours vivent dans la vue ou dans un contrôleur.
+    Seul le résultat d'un geste terminé est persisté.
+12. **Toute conversion temps ↔ écran passe par `TimelineGeometry`.** Un calcul
+    fait à la main dans une vue finit toujours par se désaligner du reste.
+13. **Un média est copié, jamais référencé en place**, et seul son chemin
+    relatif entre dans le store.
 
-## 12. Tests
+## 13. Tests
 
 `CreativoTests/` couvre :
 
@@ -403,6 +558,13 @@ neuf. Les données restent récupérables sur le disque et l'application se lanc
 - blocs de script vidéo : repli, comptage, durée, promotion en scène
 - sections de clip : facettes, déduction du type, timecodes, distribution
 - le mode d'écriture suit le type de projet et n'efface rien quand il change
+- conversion temps ↔ position, zoom, graduations, tuiles et plage visible
+- aimantation, tolérance liée au zoom, désactivation
+- bornage des frontières : pas de durée négative, pas de sortie de piste
+- création d'une section au playhead, coupe de celle qui s'y trouve
+- repères : création, déplacement borné, suppression, cascade du projet
+- import audio réel, sondage, extraction de forme d'onde et cache disque
+- remplacement d'un morceau plus court sans perdre scènes, plans ni repères
 
 Chaque test reçoit son propre `ModelContainer` en mémoire via
 `CreativoTestCase`, donc aucun test ne dépend d'un autre.

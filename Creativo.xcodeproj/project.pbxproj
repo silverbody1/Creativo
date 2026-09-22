@@ -11,6 +11,10 @@
 		2EDC7B9BE134DAA879EDC6FC /* CreativoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09B7D8A5978844090C1BB86 /* CreativoApp.swift */; };
 		02A4E2AB96206F9077C4782B /* MainShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDDBEE82DF2EA9BA20DB5CB /* MainShellView.swift */; };
 		A2B0DDAB27883487EC774BB9 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618B27494B504E31014AA74F /* RootView.swift */; };
+		4575E16A528301A1EDC3C2E3 /* AudioPlaybackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F42311ADEC0AC23B44D92CC /* AudioPlaybackController.swift */; };
+		AEFF11A6A86399C04F142306 /* WaveformExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3195AFC3CEC030F24BDF6C4 /* WaveformExtractor.swift */; };
+		B2CDC5B50066349507714693 /* WaveformSamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894AC042DB809FFBA49F8EB1 /* WaveformSamples.swift */; };
+		2E9371839625683A2AD12CDA /* WaveformStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6AF93F2D2E21F9F28A5E670 /* WaveformStore.swift */; };
 		570865CD39261DF37562BFC3 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083742233F81F60E3B61B647 /* AppAppearance.swift */; };
 		34EBA205B4D1871F43E8D619 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C695C6DA38F0318CDD5CD1 /* AppState.swift */; };
 		6DC6D7FA67D4C7511E9FDB5F /* SidebarDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9568AC5ECDAB3304A645047B /* SidebarDestination.swift */; };
@@ -64,6 +68,17 @@
 		5419793EFE55AEC76B2361D4 /* ShotEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50397045CC76A649A85EA672 /* ShotEditorSheet.swift */; };
 		DE6399EAE40211014260172E /* ShotRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9221EBEA0C4EA88A4E6D6395 /* ShotRow.swift */; };
 		295B556FEB261A535D9AA269 /* ShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABF930E4F91D3F2FE870AA2 /* ShotsView.swift */; };
+		75162DB09C7CB23F4137CC43 /* AudioTrackPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BA37B36FA96CC4F80EA405 /* AudioTrackPanel.swift */; };
+		F22FE3BF7024D0B303D6FF8D /* MarkerEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E2349F8B448FDAAAD61160 /* MarkerEditorSheet.swift */; };
+		50BFBCA853C9314AAC300D28 /* SongStructureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A9F1B11DD5114C6343647D /* SongStructureView.swift */; };
+		F9F762DE769BB4D5BFCC84EA /* TimelineInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1457842FE1BBAE5062EB69 /* TimelineInspectorView.swift */; };
+		439CE26F24667BBC111FE43F /* TimelineMarkersLane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC88ABD67BCBB98C9D88 /* TimelineMarkersLane.swift */; };
+		9578D969590D39B9327BCD5A /* TimelinePlayheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8420C966EE69E8C123F040 /* TimelinePlayheadView.swift */; };
+		7B99DFE893453828AB7698A6 /* TimelineRulerLane.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0DED826BD46ADA40C5499A4 /* TimelineRulerLane.swift */; };
+		6E96D169EEBD8A7D9B467DB3 /* TimelineSectionsLane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785A09525E62915901F6C1FF /* TimelineSectionsLane.swift */; };
+		D29242FE26DC3098EDDE4575 /* TimelineTransportBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84118A6B72AAE3F735ED5D8A /* TimelineTransportBar.swift */; };
+		275365AEF1FA15C9103EB585 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7296C9C63845F1886BB89F /* TimelineView.swift */; };
+		C07FF20B7577FF936E41B7C1 /* WaveformLane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8518C226B6109C50493E2C5D /* WaveformLane.swift */; };
 		8EA6A8E40122DEFC5EB5DDFC /* MusicVideoSectionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C7AA5A75CA2CEF6A76D38F /* MusicVideoSectionEditor.swift */; };
 		DBA28D95CBBA6044F5C0E587 /* MusicVideoWritingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26EB2433943D2A375A77C956 /* MusicVideoWritingView.swift */; };
 		09A62EADA0BCCB67E0EBB140 /* ScreenplayEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCA8AAA01E89AD99BC9F38C /* ScreenplayEditorView.swift */; };
@@ -78,6 +93,7 @@
 		F2DC18148A4868DA2F24D9C0 /* BudgetLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30149AFC3528B2BFAFF59928 /* BudgetLine.swift */; };
 		B3E87EA94F7553F95963D7A8 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = F452516897B4F28B34979A4B /* Enums.swift */; };
 		A60C99D910E96E5B7894F1BF /* EquipmentItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79ECDF1EF211DB5EBB4AE97A /* EquipmentItem.swift */; };
+		C8174676C4032845D41F1B1F /* ProjectMediaAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64986B8A5CF4565F040BD713 /* ProjectMediaAsset.swift */; };
 		FF61B4DDAF758D463184929C /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23DFC4D91B584DD1A7988655 /* Person.swift */; };
 		04E10F30A56B2A78361804DF /* ProductionLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329F6398452315B53AE1DF3F /* ProductionLocation.swift */; };
 		5BFE70017747D497BE689E5B /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02EA15DAAE457AC4D02BB16 /* Project.swift */; };
@@ -85,6 +101,7 @@
 		89F211AF87D0FCCC6DA9A212 /* ShootDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E094E14E0F2862F65A30539 /* ShootDay.swift */; };
 		BBA116E8FCC91865A515688C /* Shot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD5AC9E7BE45E2E44CC3DAC /* Shot.swift */; };
 		8CCDC9C5C251F8C16289E3C6 /* StoryScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BEDE496D0C1A1961CA50C50 /* StoryScene.swift */; };
+		0AEFCE405207F055DA56A12B /* TimelineMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE9D788A0FC4C39D9840B73 /* TimelineMarker.swift */; };
 		27CF083FB56763206EB268FC /* MusicVideoFacet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B56583F21349753EAC6D96 /* MusicVideoFacet.swift */; };
 		2E1842049179E0C7A1FAA9B6 /* ScreenplayElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8981A33BDF20E4234A37512 /* ScreenplayElement.swift */; };
 		F7833C4B3B7BF09BA0342D59 /* WritingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97E3A57332D16B5F6E8EFAEF /* WritingMode.swift */; };
@@ -99,6 +116,11 @@
 		02A56F461EC3FD6A6CF36BE3 /* SceneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206C9E2E83929A34519B51C8 /* SceneService.swift */; };
 		743F5ABFE732DE6AB22AEA11 /* ScheduleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E10346DA485AC7E8F9622B /* ScheduleService.swift */; };
 		9E0678E44784227D6EB3AB7D /* ShotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10FFF7DBFEB08768FB6DA3 /* ShotService.swift */; };
+		5BC807ACAD54B07A399D35C3 /* MediaImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855AD1DD470B2106661CC8CE /* MediaImportService.swift */; };
+		0FAAD8BB772228BFAFF005B2 /* MusicTimelineService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400F213E34BDBBA98B3BFCE1 /* MusicTimelineService.swift */; };
+		E09CA19DEF815A38D8A3DD1B /* TimelineGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D1E598E3DEC5474D1937C5 /* TimelineGeometry.swift */; };
+		1DB9A237C714071988F9DC5D /* TimelineSnapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270C239EFFC6DD3AAF747F66 /* TimelineSnapper.swift */; };
+		5C74353DF0008949EC4356D7 /* TimelineTiling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27148857C63E30FA37A062FC /* TimelineTiling.swift */; };
 		0DA6C916D1114C188A5FBA1D /* MusicVideoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD801E22A99990F16261B59 /* MusicVideoService.swift */; };
 		24F1D2C6CA8E36B8A90C2B22 /* ScreenplayFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D8D63D838E28732B0C128E /* ScreenplayFormatter.swift */; };
 		46B53CAB993BC2B544009CAF /* ScreenplayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3310B651B61ED728CEFAE570 /* ScreenplayService.swift */; };
@@ -107,9 +129,11 @@
 		EE6E1603AE3C3AD819DAF493 /* BindingHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B76042C86ACDF96D2B59A19 /* BindingHelpers.swift */; };
 		48A3A1B37613698074EA26A0 /* PlatformImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D46883B3CFD43B50D8F3A6 /* PlatformImage.swift */; };
 		F2E429004B7C32D39B64378D /* PlatformModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF66B279040E5D62341A3DC0 /* PlatformModifiers.swift */; };
+		F653A69AC804BA6BE42E7A59 /* AudioMediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A90D11ECD72E348E316C80 /* AudioMediaTests.swift */; };
 		6B43FB559C48B4835D24D237 /* BudgetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7500D111BE3D64E8BFB6744F /* BudgetTests.swift */; };
 		40D66059C17CDB6C766F43E6 /* DeletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2115BA2FFFDEE3FB91FDF4D /* DeletionTests.swift */; };
 		6A4762B418B8AF27665C246D /* FormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AF3090FAC177B52EADADAF /* FormattingTests.swift */; };
+		309F861C3B8B4BEDC37ED859 /* MusicTimelineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD51ADC43B4594169177030D /* MusicTimelineTests.swift */; };
 		24A64925693817F1DEE60BBF /* MusicVideoWritingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295F2EDE21C3CFC7F915F777 /* MusicVideoWritingTests.swift */; };
 		C4881102458E79C67DB8E7F7 /* ProjectServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF2CCBEDF6BAD5B29A1DEB2 /* ProjectServiceTests.swift */; };
 		52C51E228E140BAF2AF1E3F5 /* RelationshipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44736C14B24553A95F60E14 /* RelationshipTests.swift */; };
@@ -117,6 +141,8 @@
 		08330D9F0231672C06D8F7D5 /* ScreenplayFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E2EF8AEA6FD2AF993725E9 /* ScreenplayFormatterTests.swift */; };
 		A9E0D39ED3F6EEBC0E5F7F65 /* ScreenplayServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43C2D135337AC257DE3215B /* ScreenplayServiceTests.swift */; };
 		CD7584D2BCCFE2C6A418D961 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6072C7F56E46D21973829615 /* TestSupport.swift */; };
+		E8C94879C4652E0F2C1D7717 /* TimelineGeometryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB56D12E60A5C9D23437A77F /* TimelineGeometryTests.swift */; };
+		9912D97EA9E81AAC901B7CAE /* WaveformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B5570156AA27288D97603B /* WaveformTests.swift */; };
 		BE083AD556DCBD2C8488C112 /* WritingModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A5A1512F3541421DA92861A /* WritingModeTests.swift */; };
 		90447BB8298A1B0C07067996 /* YouTubeScriptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCDDB1DDBFAB6726A45A603E /* YouTubeScriptTests.swift */; };
 /* End PBXBuildFile section */
@@ -136,6 +162,10 @@
 		F09B7D8A5978844090C1BB86 /* CreativoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreativoApp.swift"; sourceTree = "<group>"; };
 		7EDDBEE82DF2EA9BA20DB5CB /* MainShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainShellView.swift"; sourceTree = "<group>"; };
 		618B27494B504E31014AA74F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootView.swift"; sourceTree = "<group>"; };
+		6F42311ADEC0AC23B44D92CC /* AudioPlaybackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioPlaybackController.swift"; sourceTree = "<group>"; };
+		E3195AFC3CEC030F24BDF6C4 /* WaveformExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaveformExtractor.swift"; sourceTree = "<group>"; };
+		894AC042DB809FFBA49F8EB1 /* WaveformSamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaveformSamples.swift"; sourceTree = "<group>"; };
+		C6AF93F2D2E21F9F28A5E670 /* WaveformStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaveformStore.swift"; sourceTree = "<group>"; };
 		083742233F81F60E3B61B647 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppAppearance.swift"; sourceTree = "<group>"; };
 		D6C695C6DA38F0318CDD5CD1 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState.swift"; sourceTree = "<group>"; };
 		9568AC5ECDAB3304A645047B /* SidebarDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarDestination.swift"; sourceTree = "<group>"; };
@@ -189,6 +219,17 @@
 		50397045CC76A649A85EA672 /* ShotEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShotEditorSheet.swift"; sourceTree = "<group>"; };
 		9221EBEA0C4EA88A4E6D6395 /* ShotRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShotRow.swift"; sourceTree = "<group>"; };
 		FABF930E4F91D3F2FE870AA2 /* ShotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShotsView.swift"; sourceTree = "<group>"; };
+		31BA37B36FA96CC4F80EA405 /* AudioTrackPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioTrackPanel.swift"; sourceTree = "<group>"; };
+		63E2349F8B448FDAAAD61160 /* MarkerEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MarkerEditorSheet.swift"; sourceTree = "<group>"; };
+		13A9F1B11DD5114C6343647D /* SongStructureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SongStructureView.swift"; sourceTree = "<group>"; };
+		7D1457842FE1BBAE5062EB69 /* TimelineInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineInspectorView.swift"; sourceTree = "<group>"; };
+		9A28CC88ABD67BCBB98C9D88 /* TimelineMarkersLane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineMarkersLane.swift"; sourceTree = "<group>"; };
+		0B8420C966EE69E8C123F040 /* TimelinePlayheadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelinePlayheadView.swift"; sourceTree = "<group>"; };
+		D0DED826BD46ADA40C5499A4 /* TimelineRulerLane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineRulerLane.swift"; sourceTree = "<group>"; };
+		785A09525E62915901F6C1FF /* TimelineSectionsLane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineSectionsLane.swift"; sourceTree = "<group>"; };
+		84118A6B72AAE3F735ED5D8A /* TimelineTransportBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineTransportBar.swift"; sourceTree = "<group>"; };
+		6D7296C9C63845F1886BB89F /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineView.swift"; sourceTree = "<group>"; };
+		8518C226B6109C50493E2C5D /* WaveformLane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaveformLane.swift"; sourceTree = "<group>"; };
 		61C7AA5A75CA2CEF6A76D38F /* MusicVideoSectionEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MusicVideoSectionEditor.swift"; sourceTree = "<group>"; };
 		26EB2433943D2A375A77C956 /* MusicVideoWritingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MusicVideoWritingView.swift"; sourceTree = "<group>"; };
 		4DCA8AAA01E89AD99BC9F38C /* ScreenplayEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScreenplayEditorView.swift"; sourceTree = "<group>"; };
@@ -203,6 +244,7 @@
 		30149AFC3528B2BFAFF59928 /* BudgetLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BudgetLine.swift"; sourceTree = "<group>"; };
 		F452516897B4F28B34979A4B /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Enums.swift"; sourceTree = "<group>"; };
 		79ECDF1EF211DB5EBB4AE97A /* EquipmentItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EquipmentItem.swift"; sourceTree = "<group>"; };
+		64986B8A5CF4565F040BD713 /* ProjectMediaAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProjectMediaAsset.swift"; sourceTree = "<group>"; };
 		23DFC4D91B584DD1A7988655 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Person.swift"; sourceTree = "<group>"; };
 		329F6398452315B53AE1DF3F /* ProductionLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProductionLocation.swift"; sourceTree = "<group>"; };
 		F02EA15DAAE457AC4D02BB16 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Project.swift"; sourceTree = "<group>"; };
@@ -210,6 +252,7 @@
 		2E094E14E0F2862F65A30539 /* ShootDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShootDay.swift"; sourceTree = "<group>"; };
 		5FD5AC9E7BE45E2E44CC3DAC /* Shot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Shot.swift"; sourceTree = "<group>"; };
 		6BEDE496D0C1A1961CA50C50 /* StoryScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoryScene.swift"; sourceTree = "<group>"; };
+		AFE9D788A0FC4C39D9840B73 /* TimelineMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineMarker.swift"; sourceTree = "<group>"; };
 		D6B56583F21349753EAC6D96 /* MusicVideoFacet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MusicVideoFacet.swift"; sourceTree = "<group>"; };
 		D8981A33BDF20E4234A37512 /* ScreenplayElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScreenplayElement.swift"; sourceTree = "<group>"; };
 		97E3A57332D16B5F6E8EFAEF /* WritingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WritingMode.swift"; sourceTree = "<group>"; };
@@ -224,6 +267,11 @@
 		206C9E2E83929A34519B51C8 /* SceneService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneService.swift"; sourceTree = "<group>"; };
 		93E10346DA485AC7E8F9622B /* ScheduleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScheduleService.swift"; sourceTree = "<group>"; };
 		4B10FFF7DBFEB08768FB6DA3 /* ShotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShotService.swift"; sourceTree = "<group>"; };
+		855AD1DD470B2106661CC8CE /* MediaImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MediaImportService.swift"; sourceTree = "<group>"; };
+		400F213E34BDBBA98B3BFCE1 /* MusicTimelineService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MusicTimelineService.swift"; sourceTree = "<group>"; };
+		E1D1E598E3DEC5474D1937C5 /* TimelineGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineGeometry.swift"; sourceTree = "<group>"; };
+		270C239EFFC6DD3AAF747F66 /* TimelineSnapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineSnapper.swift"; sourceTree = "<group>"; };
+		27148857C63E30FA37A062FC /* TimelineTiling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineTiling.swift"; sourceTree = "<group>"; };
 		5BD801E22A99990F16261B59 /* MusicVideoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MusicVideoService.swift"; sourceTree = "<group>"; };
 		52D8D63D838E28732B0C128E /* ScreenplayFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScreenplayFormatter.swift"; sourceTree = "<group>"; };
 		3310B651B61ED728CEFAE570 /* ScreenplayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScreenplayService.swift"; sourceTree = "<group>"; };
@@ -232,9 +280,11 @@
 		8B76042C86ACDF96D2B59A19 /* BindingHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BindingHelpers.swift"; sourceTree = "<group>"; };
 		53D46883B3CFD43B50D8F3A6 /* PlatformImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PlatformImage.swift"; sourceTree = "<group>"; };
 		DF66B279040E5D62341A3DC0 /* PlatformModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PlatformModifiers.swift"; sourceTree = "<group>"; };
+		83A90D11ECD72E348E316C80 /* AudioMediaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioMediaTests.swift"; sourceTree = "<group>"; };
 		7500D111BE3D64E8BFB6744F /* BudgetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BudgetTests.swift"; sourceTree = "<group>"; };
 		C2115BA2FFFDEE3FB91FDF4D /* DeletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeletionTests.swift"; sourceTree = "<group>"; };
 		78AF3090FAC177B52EADADAF /* FormattingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FormattingTests.swift"; sourceTree = "<group>"; };
+		AD51ADC43B4594169177030D /* MusicTimelineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MusicTimelineTests.swift"; sourceTree = "<group>"; };
 		295F2EDE21C3CFC7F915F777 /* MusicVideoWritingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MusicVideoWritingTests.swift"; sourceTree = "<group>"; };
 		8DF2CCBEDF6BAD5B29A1DEB2 /* ProjectServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProjectServiceTests.swift"; sourceTree = "<group>"; };
 		C44736C14B24553A95F60E14 /* RelationshipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RelationshipTests.swift"; sourceTree = "<group>"; };
@@ -242,6 +292,8 @@
 		93E2EF8AEA6FD2AF993725E9 /* ScreenplayFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScreenplayFormatterTests.swift"; sourceTree = "<group>"; };
 		A43C2D135337AC257DE3215B /* ScreenplayServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScreenplayServiceTests.swift"; sourceTree = "<group>"; };
 		6072C7F56E46D21973829615 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestSupport.swift"; sourceTree = "<group>"; };
+		CB56D12E60A5C9D23437A77F /* TimelineGeometryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimelineGeometryTests.swift"; sourceTree = "<group>"; };
+		55B5570156AA27288D97603B /* WaveformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaveformTests.swift"; sourceTree = "<group>"; };
 		4A5A1512F3541421DA92861A /* WritingModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WritingModeTests.swift"; sourceTree = "<group>"; };
 		DCDDB1DDBFAB6726A45A603E /* YouTubeScriptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YouTubeScriptTests.swift"; sourceTree = "<group>"; };
 		195BBCEA46D3A1317419EE3F /* Creativo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Creativo.entitlements"; sourceTree = "<group>"; };
@@ -278,6 +330,17 @@
 			path = "App";
 			sourceTree = "<group>";
 		};
+		2B83FADC48D2048A0B4BE52B /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				6F42311ADEC0AC23B44D92CC /* AudioPlaybackController.swift */,
+				E3195AFC3CEC030F24BDF6C4 /* WaveformExtractor.swift */,
+				894AC042DB809FFBA49F8EB1 /* WaveformSamples.swift */,
+				C6AF93F2D2E21F9F28A5E670 /* WaveformStore.swift */,
+			);
+			path = "Audio";
+			sourceTree = "<group>";
+		};
 		E659A1B5A5A61443AD203394 /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
@@ -301,6 +364,7 @@
 		BC4DC3E4BB64AAB1ED1A3797 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				2B83FADC48D2048A0B4BE52B /* Audio */,
 				E659A1B5A5A61443AD203394 /* Navigation */,
 				9236F11F154C6475E348008B /* Persistence */,
 			);
@@ -464,6 +528,24 @@
 			path = "Shots";
 			sourceTree = "<group>";
 		};
+		314848D72738B5D44D2C3803 /* Timeline */ = {
+			isa = PBXGroup;
+			children = (
+				31BA37B36FA96CC4F80EA405 /* AudioTrackPanel.swift */,
+				63E2349F8B448FDAAAD61160 /* MarkerEditorSheet.swift */,
+				13A9F1B11DD5114C6343647D /* SongStructureView.swift */,
+				7D1457842FE1BBAE5062EB69 /* TimelineInspectorView.swift */,
+				9A28CC88ABD67BCBB98C9D88 /* TimelineMarkersLane.swift */,
+				0B8420C966EE69E8C123F040 /* TimelinePlayheadView.swift */,
+				D0DED826BD46ADA40C5499A4 /* TimelineRulerLane.swift */,
+				785A09525E62915901F6C1FF /* TimelineSectionsLane.swift */,
+				84118A6B72AAE3F735ED5D8A /* TimelineTransportBar.swift */,
+				6D7296C9C63845F1886BB89F /* TimelineView.swift */,
+				8518C226B6109C50493E2C5D /* WaveformLane.swift */,
+			);
+			path = "Timeline";
+			sourceTree = "<group>";
+		};
 		A0E5E65D3BBF7ACB16A58F56 /* MusicVideo */ = {
 			isa = PBXGroup;
 			children = (
@@ -517,9 +599,26 @@
 				A784100226D7C37E253B11F3 /* Schedule */,
 				7908A7628D3D7AC3DCD47D72 /* Settings */,
 				92745F586244EA5DA1E32377 /* Shots */,
+				314848D72738B5D44D2C3803 /* Timeline */,
 				2C54456E52D9F79F9DCEB672 /* Writing */,
 			);
 			path = "Features";
+			sourceTree = "<group>";
+		};
+		89E6BB5A877A7FF064C2A0B9 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				64986B8A5CF4565F040BD713 /* ProjectMediaAsset.swift */,
+			);
+			path = "Media";
+			sourceTree = "<group>";
+		};
+		30014967E9B34EE73369B6E5 /* Timeline */ = {
+			isa = PBXGroup;
+			children = (
+				AFE9D788A0FC4C39D9840B73 /* TimelineMarker.swift */,
+			);
+			path = "Timeline";
 			sourceTree = "<group>";
 		};
 		AD93EC81DE1BA3025DAA6CF7 /* Writing */ = {
@@ -536,6 +635,8 @@
 		9AA3633E95DBEC0703278AA7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				89E6BB5A877A7FF064C2A0B9 /* Media */,
+				30014967E9B34EE73369B6E5 /* Timeline */,
 				AD93EC81DE1BA3025DAA6CF7 /* Writing */,
 				842FF03B53CCA73F9B50D69D /* Assignments.swift */,
 				30149AFC3528B2BFAFF59928 /* BudgetLine.swift */,
@@ -568,6 +669,18 @@
 			path = "Resources";
 			sourceTree = "<group>";
 		};
+		E070388EABD0CD7AF2ACF648 /* Timeline */ = {
+			isa = PBXGroup;
+			children = (
+				855AD1DD470B2106661CC8CE /* MediaImportService.swift */,
+				400F213E34BDBBA98B3BFCE1 /* MusicTimelineService.swift */,
+				E1D1E598E3DEC5474D1937C5 /* TimelineGeometry.swift */,
+				270C239EFFC6DD3AAF747F66 /* TimelineSnapper.swift */,
+				27148857C63E30FA37A062FC /* TimelineTiling.swift */,
+			);
+			path = "Timeline";
+			sourceTree = "<group>";
+		};
 		D85B2D7209D4FC675F59995E /* Writing */ = {
 			isa = PBXGroup;
 			children = (
@@ -582,6 +695,7 @@
 		7BD7DB16CD990B903C2F4E6E /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E070388EABD0CD7AF2ACF648 /* Timeline */,
 				D85B2D7209D4FC675F59995E /* Writing */,
 				C9595E15828E42CD6C1E0684 /* BudgetCalculator.swift */,
 				A7DCAE707D18116ABAD751C5 /* LibraryService.swift */,
@@ -625,9 +739,11 @@
 		6BBD27A4FA8C2055935EAD5B /* CreativoTests */ = {
 			isa = PBXGroup;
 			children = (
+				83A90D11ECD72E348E316C80 /* AudioMediaTests.swift */,
 				7500D111BE3D64E8BFB6744F /* BudgetTests.swift */,
 				C2115BA2FFFDEE3FB91FDF4D /* DeletionTests.swift */,
 				78AF3090FAC177B52EADADAF /* FormattingTests.swift */,
+				AD51ADC43B4594169177030D /* MusicTimelineTests.swift */,
 				295F2EDE21C3CFC7F915F777 /* MusicVideoWritingTests.swift */,
 				8DF2CCBEDF6BAD5B29A1DEB2 /* ProjectServiceTests.swift */,
 				C44736C14B24553A95F60E14 /* RelationshipTests.swift */,
@@ -635,6 +751,8 @@
 				93E2EF8AEA6FD2AF993725E9 /* ScreenplayFormatterTests.swift */,
 				A43C2D135337AC257DE3215B /* ScreenplayServiceTests.swift */,
 				6072C7F56E46D21973829615 /* TestSupport.swift */,
+				CB56D12E60A5C9D23437A77F /* TimelineGeometryTests.swift */,
+				55B5570156AA27288D97603B /* WaveformTests.swift */,
 				4A5A1512F3541421DA92861A /* WritingModeTests.swift */,
 				DCDDB1DDBFAB6726A45A603E /* YouTubeScriptTests.swift */,
 			);
@@ -771,6 +889,10 @@
 				2EDC7B9BE134DAA879EDC6FC /* CreativoApp.swift */,
 				02A4E2AB96206F9077C4782B /* MainShellView.swift */,
 				A2B0DDAB27883487EC774BB9 /* RootView.swift */,
+				4575E16A528301A1EDC3C2E3 /* AudioPlaybackController.swift */,
+				AEFF11A6A86399C04F142306 /* WaveformExtractor.swift */,
+				B2CDC5B50066349507714693 /* WaveformSamples.swift */,
+				2E9371839625683A2AD12CDA /* WaveformStore.swift */,
 				570865CD39261DF37562BFC3 /* AppAppearance.swift */,
 				34EBA205B4D1871F43E8D619 /* AppState.swift */,
 				6DC6D7FA67D4C7511E9FDB5F /* SidebarDestination.swift */,
@@ -824,6 +946,17 @@
 				5419793EFE55AEC76B2361D4 /* ShotEditorSheet.swift */,
 				DE6399EAE40211014260172E /* ShotRow.swift */,
 				295B556FEB261A535D9AA269 /* ShotsView.swift */,
+				75162DB09C7CB23F4137CC43 /* AudioTrackPanel.swift */,
+				F22FE3BF7024D0B303D6FF8D /* MarkerEditorSheet.swift */,
+				50BFBCA853C9314AAC300D28 /* SongStructureView.swift */,
+				F9F762DE769BB4D5BFCC84EA /* TimelineInspectorView.swift */,
+				439CE26F24667BBC111FE43F /* TimelineMarkersLane.swift */,
+				9578D969590D39B9327BCD5A /* TimelinePlayheadView.swift */,
+				7B99DFE893453828AB7698A6 /* TimelineRulerLane.swift */,
+				6E96D169EEBD8A7D9B467DB3 /* TimelineSectionsLane.swift */,
+				D29242FE26DC3098EDDE4575 /* TimelineTransportBar.swift */,
+				275365AEF1FA15C9103EB585 /* TimelineView.swift */,
+				C07FF20B7577FF936E41B7C1 /* WaveformLane.swift */,
 				8EA6A8E40122DEFC5EB5DDFC /* MusicVideoSectionEditor.swift */,
 				DBA28D95CBBA6044F5C0E587 /* MusicVideoWritingView.swift */,
 				09A62EADA0BCCB67E0EBB140 /* ScreenplayEditorView.swift */,
@@ -838,6 +971,7 @@
 				F2DC18148A4868DA2F24D9C0 /* BudgetLine.swift */,
 				B3E87EA94F7553F95963D7A8 /* Enums.swift */,
 				A60C99D910E96E5B7894F1BF /* EquipmentItem.swift */,
+				C8174676C4032845D41F1B1F /* ProjectMediaAsset.swift */,
 				FF61B4DDAF758D463184929C /* Person.swift */,
 				04E10F30A56B2A78361804DF /* ProductionLocation.swift */,
 				5BFE70017747D497BE689E5B /* Project.swift */,
@@ -845,6 +979,7 @@
 				89F211AF87D0FCCC6DA9A212 /* ShootDay.swift */,
 				BBA116E8FCC91865A515688C /* Shot.swift */,
 				8CCDC9C5C251F8C16289E3C6 /* StoryScene.swift */,
+				0AEFCE405207F055DA56A12B /* TimelineMarker.swift */,
 				27CF083FB56763206EB268FC /* MusicVideoFacet.swift */,
 				2E1842049179E0C7A1FAA9B6 /* ScreenplayElement.swift */,
 				F7833C4B3B7BF09BA0342D59 /* WritingMode.swift */,
@@ -858,6 +993,11 @@
 				02A56F461EC3FD6A6CF36BE3 /* SceneService.swift */,
 				743F5ABFE732DE6AB22AEA11 /* ScheduleService.swift */,
 				9E0678E44784227D6EB3AB7D /* ShotService.swift */,
+				5BC807ACAD54B07A399D35C3 /* MediaImportService.swift */,
+				0FAAD8BB772228BFAFF005B2 /* MusicTimelineService.swift */,
+				E09CA19DEF815A38D8A3DD1B /* TimelineGeometry.swift */,
+				1DB9A237C714071988F9DC5D /* TimelineSnapper.swift */,
+				5C74353DF0008949EC4356D7 /* TimelineTiling.swift */,
 				0DA6C916D1114C188A5FBA1D /* MusicVideoService.swift */,
 				24F1D2C6CA8E36B8A90C2B22 /* ScreenplayFormatter.swift */,
 				46B53CAB993BC2B544009CAF /* ScreenplayService.swift */,
@@ -873,9 +1013,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F653A69AC804BA6BE42E7A59 /* AudioMediaTests.swift */,
 				6B43FB559C48B4835D24D237 /* BudgetTests.swift */,
 				40D66059C17CDB6C766F43E6 /* DeletionTests.swift */,
 				6A4762B418B8AF27665C246D /* FormattingTests.swift */,
+				309F861C3B8B4BEDC37ED859 /* MusicTimelineTests.swift */,
 				24A64925693817F1DEE60BBF /* MusicVideoWritingTests.swift */,
 				C4881102458E79C67DB8E7F7 /* ProjectServiceTests.swift */,
 				52C51E228E140BAF2AF1E3F5 /* RelationshipTests.swift */,
@@ -883,6 +1025,8 @@
 				08330D9F0231672C06D8F7D5 /* ScreenplayFormatterTests.swift */,
 				A9E0D39ED3F6EEBC0E5F7F65 /* ScreenplayServiceTests.swift */,
 				CD7584D2BCCFE2C6A418D961 /* TestSupport.swift */,
+				E8C94879C4652E0F2C1D7717 /* TimelineGeometryTests.swift */,
+				9912D97EA9E81AAC901B7CAE /* WaveformTests.swift */,
 				BE083AD556DCBD2C8488C112 /* WritingModeTests.swift */,
 				90447BB8298A1B0C07067996 /* YouTubeScriptTests.swift */,
 			);

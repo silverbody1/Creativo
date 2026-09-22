@@ -34,6 +34,13 @@ final class Project {
     /// Per project, because presenters do not all speak at the same pace.
     var wordsPerMinute: Int = 150
 
+    // MARK: Timeline
+
+    /// The track the clip is built on, referenced by identifier rather than by
+    /// relationship: a second relationship to `ProjectMediaAsset` alongside
+    /// `mediaAssets` would leave SwiftData to guess which inverse is which.
+    var primaryAudioAssetID: UUID?
+
     // MARK: Owned children
 
     @Relationship(deleteRule: .cascade, inverse: \StoryScene.project)
@@ -56,6 +63,12 @@ final class Project {
 
     @Relationship(deleteRule: .cascade, inverse: \YouTubeBlock.project)
     var youtubeBlocks: [YouTubeBlock] = []
+
+    @Relationship(deleteRule: .cascade, inverse: \ProjectMediaAsset.project)
+    var mediaAssets: [ProjectMediaAsset] = []
+
+    @Relationship(deleteRule: .cascade, inverse: \TimelineMarker.project)
+    var markers: [TimelineMarker] = []
 
     // MARK: Library references
 
@@ -102,6 +115,41 @@ extension Project {
     /// Writing surface this project actually uses.
     var writingMode: WritingMode {
         writingModeOverride ?? type.defaultWritingMode
+    }
+
+    var audioAssets: [ProjectMediaAsset] {
+        mediaAssets
+            .filter { $0.type == .audio }
+            .sorted { $0.importedAt > $1.importedAt }
+    }
+
+    /// The track the timeline is built on, when one has been imported.
+    var primaryAudioAsset: ProjectMediaAsset? {
+        guard let identifier = primaryAudioAssetID else { return audioAssets.first }
+        return mediaAssets.first { $0.id == identifier } ?? audioAssets.first
+    }
+
+    /// Length of the track, falling back to the last section's end so the
+    /// timeline stays usable before any audio is imported.
+    var timelineDuration: TimeInterval {
+        if let asset = primaryAudioAsset, asset.duration > 0 { return asset.duration }
+        let sectionEnd = musicSections.compactMap { $0.musicFacet?.endTime }.max() ?? 0
+        return max(sectionEnd, 0)
+    }
+
+    var sortedMarkers: [TimelineMarker] {
+        markers.sorted { lhs, rhs in
+            if lhs.time != rhs.time { return lhs.time < rhs.time }
+            return lhs.createdAt < rhs.createdAt
+        }
+    }
+
+    /// Sections placed on the track, in time order. A section without a start
+    /// time has not been positioned yet and is left out.
+    var timedSections: [StoryScene] {
+        musicSections
+            .filter { $0.musicFacet?.startTime != nil }
+            .sorted { ($0.musicFacet?.startTime ?? 0) < ($1.musicFacet?.startTime ?? 0) }
     }
 
     var sortedYouTubeBlocks: [YouTubeBlock] {
