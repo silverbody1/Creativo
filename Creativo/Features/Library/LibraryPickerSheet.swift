@@ -10,7 +10,7 @@ struct LibraryPickerSheet<Item: Identifiable & Hashable, Row: View>: View {
     let items: [Item]
     let searchText: (Item) -> String
     let onSelect: (Item) -> Void
-    @ViewBuilder let row: (Item) -> Row
+    @ViewBuilder var row: (Item) -> Row
 
     @Environment(\.dismiss) private var dismiss
     @State private var query = ""

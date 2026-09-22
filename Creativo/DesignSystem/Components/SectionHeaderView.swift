@@ -4,7 +4,7 @@ import SwiftUI
 struct SectionHeaderView<Trailing: View>: View {
     let title: String
     var subtitle: String?
-    @ViewBuilder var trailing: Trailing
+    let trailing: Trailing
 
     init(_ title: String, subtitle: String? = nil, @ViewBuilder trailing: () -> Trailing) {
         self.title = title

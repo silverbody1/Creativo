@@ -10,7 +10,7 @@ struct EmptyStateView<Actions: View>: View {
     let title: String
     let message: String
     var tint: Color = .accentColor
-    @ViewBuilder var actions: Actions
+    let actions: Actions
 
     init(
         symbolName: String,
@@ -30,7 +30,7 @@ struct EmptyStateView<Actions: View>: View {
         VStack(spacing: Spacing.lg) {
             Image(systemName: symbolName)
                 .font(.system(size: 42, weight: .light))
-                .foregroundStyle(tint.gradient)
+                .foregroundStyle(tint)
                 .symbolRenderingMode(.hierarchical)
                 .padding(Spacing.xl)
                 .background(tint.opacity(0.10), in: Circle())
