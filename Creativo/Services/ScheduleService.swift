@@ -29,6 +29,7 @@ enum ScheduleService {
 
     static func delete(_ day: ShootDay, context: ModelContext) {
         let project = day.project
+        project?.shootDays.removeAll { $0.id == day.id }
         context.delete(day)
         project?.touch()
         PersistenceActions.save(context)

@@ -26,7 +26,11 @@ final class SampleDataTests: CreativoTestCase {
         XCTAssertGreaterThanOrEqual(try countOf(Person.self), 5)
         XCTAssertGreaterThanOrEqual(try countOf(ProductionLocation.self), 3)
         XCTAssertGreaterThanOrEqual(try countOf(EquipmentItem.self), 5)
-        XCTAssertEqual(try countOf(Project.self), 2)
+
+        // One project per writing surface: clip, screenplay, video script.
+        let projects = try fetchAll(Project.self)
+        XCTAssertEqual(projects.count, 3)
+        XCTAssertEqual(Set(projects.map(\.type)), [.musicVideo, .film, .youtube])
     }
 
     func testSampleBudgetProducesACoherentSummary() throws {

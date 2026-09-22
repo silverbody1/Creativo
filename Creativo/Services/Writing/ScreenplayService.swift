@@ -59,6 +59,9 @@ enum ScreenplayService {
 
     static func delete(_ element: ScreenplayElement, context: ModelContext) {
         let scene = element.scene
+        // See `SceneService.delete`: detach first so the reindex and the
+        // plain-text copy both reflect the removal straight away.
+        scene?.screenplayElements.removeAll { $0.id == element.id }
         context.delete(element)
         if let scene {
             reindex(scene)
@@ -106,6 +109,7 @@ enum ScreenplayService {
         var removed = false
         while let last = ordered.last, last.isEmpty {
             ordered.removeLast()
+            scene.screenplayElements.removeAll { $0.id == last.id }
             context.delete(last)
             removed = true
         }
@@ -168,8 +172,12 @@ enum ScreenplayService {
     }
 
     /// Mirrors the typed elements into `StoryScene.content`.
+    ///
+    /// Always rewrites, including when the last line has just been deleted:
+    /// keeping the previous text would leave the Scenes screen showing
+    /// something the editor no longer contains. Scenes never opened in the
+    /// editor are unaffected, because nothing here runs for them.
     static func syncPlainText(for scene: StoryScene) {
-        guard !scene.screenplayElements.isEmpty else { return }
         scene.content = ScreenplayFormatter.plainText(for: scene)
     }
 }

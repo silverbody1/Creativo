@@ -97,6 +97,8 @@ enum YouTubeScriptService {
 
     static func delete(_ block: YouTubeBlock, context: ModelContext) {
         let project = block.project
+        // See `SceneService.delete`: detach first so the reindex is immediate.
+        project?.youtubeBlocks.removeAll { $0.id == block.id }
         context.delete(block)
         if let project {
             reindex(project)

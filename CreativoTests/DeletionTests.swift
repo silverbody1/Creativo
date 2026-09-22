@@ -141,6 +141,50 @@ final class DeletionTests: CreativoTestCase {
         XCTAssertTrue(project.peopleAssignments.isEmpty)
     }
 
+    /// The bug this guards against: SwiftData keeps a deleted object in its
+    /// parent's to-many array until the context is saved, so anything that
+    /// renumbers in the same turn used to renumber around a ghost.
+    func testDeletionIsVisibleOnTheParentBeforeAnythingElseHappens() throws {
+        let project = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
+        let scene = SceneService.create(in: project, title: "A", context: context)
+        SceneService.create(in: project, title: "B", context: context)
+        ShotService.create(in: scene, context: context)
+        ScreenplayService.append(.action, text: "A", to: scene, context: context)
+        let line = BudgetService.create(in: project, title: "Ligne", quantity: 1, unitPrice: 10, numberOfDays: 1, context: context)
+        let day = ScheduleService.createDay(in: project, context: context)
+        let block = YouTubeScriptService.append(.hook, to: project, context: context)
+
+        SceneService.delete(scene, context: context)
+        XCTAssertEqual(project.scenes.count, 1)
+        XCTAssertFalse(project.scenes.contains { $0.id == scene.id })
+        XCTAssertEqual(project.sortedScenes.map(\.orderIndex), [0])
+
+        BudgetService.delete(line, context: context)
+        XCTAssertTrue(project.budgetLines.isEmpty)
+
+        ScheduleService.delete(day, context: context)
+        XCTAssertTrue(project.shootDays.isEmpty)
+
+        YouTubeScriptService.delete(block, context: context)
+        XCTAssertTrue(project.youtubeBlocks.isEmpty)
+
+        // The shot and the screenplay line went with their scene.
+        XCTAssertEqual(try countOf(Shot.self), 0)
+        XCTAssertEqual(try countOf(ScreenplayElement.self), 0)
+    }
+
+    func testDeletingTheLastScreenplayLineClearsTheSceneText() throws {
+        let project = ProjectService.create(name: "Film", type: .film, context: context)
+        let scene = SceneService.create(in: project, title: "Une", context: context)
+        let element = ScreenplayService.append(.action, text: "Il entre.", to: scene, context: context)
+        XCTAssertTrue(scene.content.contains("Il entre."))
+
+        ScreenplayService.delete(element, context: context)
+
+        XCTAssertFalse(scene.content.contains("Il entre."))
+        XCTAssertTrue(scene.screenplayElements.isEmpty)
+    }
+
     func testDeletingABudgetLineLeavesTheOthersIntact() throws {
         let project = ProjectService.create(name: "Clip", type: .musicVideo, context: context)
         let kept = BudgetService.create(in: project, title: "Gardée", quantity: 1, unitPrice: 100, numberOfDays: 1, context: context)

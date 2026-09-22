@@ -28,6 +28,10 @@ enum SceneService {
 
     static func delete(_ scene: StoryScene, context: ModelContext) {
         let project = scene.project
+        // Detach before deleting: a deleted object stays in its parent's
+        // to-many array until the context is saved, and the reindex below
+        // would then renumber around a scene that no longer exists.
+        project?.scenes.removeAll { $0.id == scene.id }
         context.delete(scene)
         if let project {
             reindex(project)

@@ -123,6 +123,7 @@ enum BudgetService {
 
     static func delete(_ line: BudgetLine, context: ModelContext) {
         let project = line.project
+        project?.budgetLines.removeAll { $0.id == line.id }
         context.delete(line)
         project?.touch()
         PersistenceActions.save(context)

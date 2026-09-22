@@ -28,6 +28,8 @@ enum ShotService {
 
     static func delete(_ shot: Shot, context: ModelContext) {
         let scene = shot.scene
+        // See `SceneService.delete`: detach first so the reindex is immediate.
+        scene?.shots.removeAll { $0.id == shot.id }
         context.delete(shot)
         if let scene {
             reindex(scene)

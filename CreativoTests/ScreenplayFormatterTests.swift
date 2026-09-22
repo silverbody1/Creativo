@@ -46,13 +46,14 @@ final class ScreenplayFormatterTests: XCTestCase {
     }
 
     func testDialogueWrapsNarrowerThanAction() {
-        let text = String(repeating: "a", count: 70)
+        // 140 characters: three lines at the action width of 61, four at the
+        // dialogue width of 35. Both carry one blank line after them.
+        let text = String(repeating: "a", count: 140)
         let action = ScreenplayElement(type: .action, text: text)
         let dialogue = ScreenplayElement(type: .dialogue, text: text)
-        XCTAssertGreaterThan(
-            ScreenplayFormatter.printedLineCount(for: dialogue),
-            ScreenplayFormatter.printedLineCount(for: action)
-        )
+
+        XCTAssertEqual(ScreenplayFormatter.printedLineCount(for: action), 4)
+        XCTAssertEqual(ScreenplayFormatter.printedLineCount(for: dialogue), 5)
     }
 
     func testCharacterCueTakesOneLineWithNoBlankAfterIt() {
