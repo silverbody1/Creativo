@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1600"
+   LastUpgradeVersion = "1500"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "YES"
-      buildArchitectures = "Automatic">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -15,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A0000000000000000000010"
+               BlueprintIdentifier = "BCDDBEE376DD922EF6762B3D"
                BuildableName = "Creativo.app"
                BlueprintName = "Creativo"
                ReferencedContainer = "container:Creativo.xcodeproj">
@@ -27,14 +26,13 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A0000000000000000000020"
+               BlueprintIdentifier = "097C7707D74AFB72E770B814"
                BuildableName = "CreativoTests.xctest"
                BlueprintName = "CreativoTests"
                ReferencedContainer = "container:Creativo.xcodeproj">
@@ -56,7 +54,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A0000000000000000000010"
+            BlueprintIdentifier = "BCDDBEE376DD922EF6762B3D"
             BuildableName = "Creativo.app"
             BlueprintName = "Creativo"
             ReferencedContainer = "container:Creativo.xcodeproj">
@@ -73,7 +71,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A0000000000000000000010"
+            BlueprintIdentifier = "BCDDBEE376DD922EF6762B3D"
             BuildableName = "Creativo.app"
             BlueprintName = "Creativo"
             ReferencedContainer = "container:Creativo.xcodeproj">
