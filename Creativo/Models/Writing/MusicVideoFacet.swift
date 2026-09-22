@@ -79,8 +79,23 @@ extension MusicVideoFacet {
         return "\(AppFormat.timecode(startTime)) → \(AppFormat.timecode(endTime))"
     }
 
+    /// The lyrics of the section, line by line.
+    ///
+    /// Two levels are planned and only the first exists today. This one is the
+    /// full text of the section, which is what a writer edits. The second,
+    /// word- or line-level timing, will arrive as a `LyricLine` model hanging
+    /// off this facet, each line carrying its own timecode: an addition, never
+    /// a reshape. The full text stays the source; timed lines will only
+    /// overlay it.
+    var lyricLines: [String] {
+        lyrics
+            .split(whereSeparator: \.isNewline)
+            .map { String($0).trimmed }
+            .filter { !$0.isEmpty }
+    }
+
     var lyricsLineCount: Int {
-        lyrics.split(whereSeparator: \.isNewline).count
+        lyricLines.count
     }
 
     func touch(_ date: Date = .now) {

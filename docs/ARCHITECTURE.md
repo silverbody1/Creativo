@@ -314,6 +314,12 @@ sans fenêtre.
 | `fittingPixelsPerSecond` | « voir tout le morceau » |
 | `scrollOffset(keeping:atViewportX:)` | zoom ancré plutôt que téléporté |
 
+Le zoom est **ancré sur la tête de lecture** : après chaque changement
+d'échelle, y compris un pincement, le moment qu'on est en train d'écouter est
+ramené au centre. Sans cela, zoomer téléporterait la vue là où le défilement
+se trouvait par hasard. Le même mécanisme sert à révéler une section
+sélectionnée dans la vue structure.
+
 Le zoom est **exclusivement horizontal** : la hauteur de la forme d'onde ne
 change jamais. Une piste de trois minutes zoomée à fond fait plus de cent mille
 points de large, donc la règle et la forme d'onde sont dessinées en tuiles de
@@ -322,6 +328,40 @@ points de large, donc la règle et la forme d'onde sont dessinées en tuiles de
 `TimelineSnapper` est l'aimant. Sa tolérance est donnée en secondes mais
 dérivée du zoom par l'appelant, donc l'aimant fait toujours la même largeur à
 l'écran. Il se désactive d'un bouton.
+
+### Tête de lecture
+
+La ligne verticale est transparente aux clics, pour que la forme d'onde et les
+sections restent atteignables dessous ; seule la poignée triangulaire se
+saisit. Son glissement travaille en translation plutôt qu'en position absolue,
+ce qui lui évite de dépendre d'un espace de coordonnées nommé, et passe par le
+même aimant que les frontières. VoiceOver l'annonce avec son timecode et
+l'ajuste par incréments de cinq secondes.
+
+On peut aussi la poser en glissant sur la règle, ou d'un clic sur la forme
+d'onde. La règle est la surface de scrub plutôt que toute la timeline, pour
+qu'un doigt posé sur la forme d'onde continue de faire défiler.
+
+### Métadonnées du fichier
+
+À l'import, les tags standard du fichier — titre, artiste, album — sont lus
+avec `AVAsset.load(.commonMetadata)` et renomment le morceau. La lecture a
+lieu **après** l'import, dans une tâche à part, pour qu'un fichier aux
+métadonnées lentes ne retarde pas l'apparition de la forme d'onde. Rien n'est
+inventé : un fichier sans tags garde le nom qu'on lui a donné. Reconnaître un
+couplet d'un refrain est une phase ultérieure et ne se fera pas en douce dans
+un importeur.
+
+### Paroles : deux niveaux
+
+Le premier existe : `MusicVideoFacet.lyrics`, le texte complet de la section,
+que l'écriture et la timeline éditent indifféremment.
+
+Le second viendra : un modèle `LyricLine` enfant du facet, chaque ligne
+portant son propre timecode. `lyricLines` découpe déjà le texte en lignes
+propres et sert de couture. Le texte complet restera la source ; les lignes
+datées ne feront que s'y superposer. C'est un ajout au schéma, jamais une
+refonte, et le karaoké mot à mot n'est pas développé ici.
 
 ### Une section de clip reste une scène
 
@@ -464,6 +504,7 @@ la plus utile en attendant.
 | `TimelineTiling` | découpage de la timeline en tuiles — pur |
 | `MediaImportService` | import, remplacement et retrait d'un média |
 | `WaveformExtractor` / `WaveformStore` | extraction et cache de forme d'onde |
+| `AudioMetadata` | tags standard du fichier, lus hors MainActor |
 | `AudioPlaybackController` | lecture et position, jamais persistées |
 | `PersistenceActions` | enregistrement et journalisation |
 

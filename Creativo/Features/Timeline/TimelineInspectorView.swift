@@ -177,28 +177,50 @@ struct TimelineInspectorView: View {
                     }
                 }
 
-                if !facet.wardrobe.isBlank {
-                    labelled("Tenues", facet.wardrobe)
-                }
-                if !facet.props.isBlank {
-                    labelled("Accessoires", facet.props)
-                }
-                if !scene.notes.isBlank {
-                    labelled("Notes de réalisation", scene.notes)
-                }
+                editable(
+                    "Tenues",
+                    text: Bindable(facet).wardrobe,
+                    prompt: "Ce que portent les personnes à l'image",
+                    onEdit: { facet.touch() }
+                )
+                editable(
+                    "Accessoires",
+                    text: Bindable(facet).props,
+                    prompt: "Objets nécessaires à la section",
+                    onEdit: { facet.touch() }
+                )
+                editable(
+                    "Notes de réalisation",
+                    text: $scene.notes,
+                    prompt: "Intentions, références, contraintes",
+                    onEdit: { scene.touch() }
+                )
             }
         }
     }
 
-    private func labelled(_ title: String, _ value: String) -> some View {
-        VStack(alignment: .leading, spacing: 1) {
+    /// A labelled field that writes straight to the section, like every other
+    /// control here: what is typed in the inspector is what the writing editor
+    /// shows, with no copy in between.
+    private func editable(
+        _ title: String,
+        text: Binding<String>,
+        prompt: String,
+        onEdit: @escaping () -> Void
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
             Text(title.uppercased())
                 .font(.caption2.weight(.semibold))
                 .tracking(0.6)
                 .foregroundStyle(.secondary)
-            Text(value)
+            TextField(prompt, text: text, axis: .vertical)
+                .textFieldStyle(.plain)
                 .font(.callout)
-                .fixedSize(horizontal: false, vertical: true)
+                .lineLimit(1...4)
+                .focused($isEditingText)
+                .onChange(of: text.wrappedValue) { _, _ in onEdit() }
+                .padding(Spacing.sm)
+                .background(Surface.card, in: RoundedRectangle(cornerRadius: CornerRadius.small, style: .continuous))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

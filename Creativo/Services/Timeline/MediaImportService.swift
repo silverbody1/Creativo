@@ -131,6 +131,27 @@ enum MediaImportService {
         PersistenceActions.save(context)
     }
 
+    /// Renames an imported track from the tags the file already carries.
+    ///
+    /// Run after the import rather than during it, so a file with slow or
+    /// missing metadata never delays the moment the waveform appears. Nothing
+    /// is invented: a file without tags keeps the name it was given.
+    @MainActor
+    static func refreshMetadata(for asset: ProjectMediaAsset, context: ModelContext) async {
+        guard asset.isAvailable else { return }
+        let info = await AudioMetadata.read(from: asset.fileURL)
+        guard !info.isEmpty else { return }
+
+        if let title = info.title {
+            asset.displayName = title
+        }
+        if let artist = info.artist, asset.notes.isBlank {
+            asset.notes = info.album.map { "\(artist) · \($0)" } ?? artist
+        }
+        asset.project?.touch()
+        PersistenceActions.save(context)
+    }
+
     private static func fileSize(of url: URL) -> Int64 {
         let attributes = try? FileManager.default.attributesOfItem(atPath: url.path(percentEncoded: false))
         return (attributes?[.size] as? NSNumber)?.int64Value ?? 0

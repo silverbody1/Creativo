@@ -139,6 +139,23 @@ final class MusicVideoWritingTests: CreativoTestCase {
         XCTAssertEqual(facet.lyricsLineCount, 3)
     }
 
+    /// The seam the word-level timing phase will hang off: the full text stays
+    /// the source, the lines are derived from it.
+    func testLyricLinesAreTrimmedAndFreeOfBlanks() {
+        let facet = MusicVideoFacet(
+            kind: .chorus,
+            lyrics: "  Partenaire, partenaire  \n\n   \nOn se relève ensemble\n"
+        )
+        XCTAssertEqual(facet.lyricLines, ["Partenaire, partenaire", "On se relève ensemble"])
+        XCTAssertEqual(facet.lyricsLineCount, 2)
+    }
+
+    func testLyricLinesOfAnEmptySectionAreEmpty() {
+        XCTAssertTrue(MusicVideoFacet(kind: .intro).lyricLines.isEmpty)
+        XCTAssertTrue(MusicVideoFacet(kind: .intro, lyrics: "   \n\n  ").lyricLines.isEmpty)
+        XCTAssertEqual(MusicVideoFacet(kind: .intro).lyricsLineCount, 0)
+    }
+
     func testTrackDurationSpansEveryTimedSection() throws {
         let project = makeProject()
         let first = MusicVideoService.createSection(in: project, kind: .intro, context: context)

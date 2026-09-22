@@ -73,6 +73,49 @@ final class AudioMediaTests: CreativoTestCase {
         XCTAssertNil(WaveformExtractor.probe(url: url))
     }
 
+    // MARK: Metadata
+
+    func testMetadataSummaryJoinsWhatIsThere() {
+        XCTAssertEqual(
+            AudioMetadata.Info(title: "Partenaire", artist: "NAYRA").summary,
+            "NAYRA — Partenaire"
+        )
+        XCTAssertEqual(AudioMetadata.Info(title: "Partenaire").summary, "Partenaire")
+        XCTAssertEqual(AudioMetadata.Info(artist: "NAYRA").summary, "NAYRA")
+        XCTAssertNil(AudioMetadata.Info().summary)
+        XCTAssertTrue(AudioMetadata.Info().isEmpty)
+        XCTAssertFalse(AudioMetadata.Info(album: "Premier").isEmpty)
+    }
+
+    func testAFileWithoutTagsReadsAsEmptyRatherThanFailing() async throws {
+        let url = try makeAudioFile(duration: 0.5)
+        let info = await AudioMetadata.read(from: url)
+        XCTAssertTrue(info.isEmpty)
+    }
+
+    func testReadingMetadataFromSomethingUnreadableIsHarmless() async throws {
+        let url = FileManager.default.temporaryDirectory
+            .appending(path: "creativo-test-\(UUID().uuidString).m4a", directoryHint: .notDirectory)
+        try Data("pas un son".utf8).write(to: url)
+        temporaryFiles.append(url)
+
+        let info = await AudioMetadata.read(from: url)
+        XCTAssertTrue(info.isEmpty)
+    }
+
+    @MainActor
+    func testRefreshingMetadataKeepsTheNameWhenThereAreNoTags() async throws {
+        let project = ProjectService.create(name: "PARTENAIRE", type: .musicVideo, context: context)
+        let url = try makeAudioFile(duration: 0.5)
+        let asset = try MediaImportService.importAudio(from: url, into: project, context: context)
+        let originalName = asset.displayName
+
+        await MediaImportService.refreshMetadata(for: asset, context: context)
+
+        XCTAssertEqual(asset.displayName, originalName)
+        MediaImportService.remove(asset, from: project, context: context)
+    }
+
     // MARK: Importing
 
     func testImportingCopiesTheFileIntoTheProject() throws {

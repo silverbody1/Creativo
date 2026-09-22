@@ -11,6 +11,7 @@
 		2EDC7B9BE134DAA879EDC6FC /* CreativoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09B7D8A5978844090C1BB86 /* CreativoApp.swift */; };
 		02A4E2AB96206F9077C4782B /* MainShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDDBEE82DF2EA9BA20DB5CB /* MainShellView.swift */; };
 		A2B0DDAB27883487EC774BB9 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618B27494B504E31014AA74F /* RootView.swift */; };
+		5DE36C34125B533BD812F06D /* AudioMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8557433B58D40AA0C60C29FB /* AudioMetadata.swift */; };
 		4575E16A528301A1EDC3C2E3 /* AudioPlaybackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F42311ADEC0AC23B44D92CC /* AudioPlaybackController.swift */; };
 		AEFF11A6A86399C04F142306 /* WaveformExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3195AFC3CEC030F24BDF6C4 /* WaveformExtractor.swift */; };
 		B2CDC5B50066349507714693 /* WaveformSamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894AC042DB809FFBA49F8EB1 /* WaveformSamples.swift */; };
@@ -162,6 +163,7 @@
 		F09B7D8A5978844090C1BB86 /* CreativoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreativoApp.swift"; sourceTree = "<group>"; };
 		7EDDBEE82DF2EA9BA20DB5CB /* MainShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainShellView.swift"; sourceTree = "<group>"; };
 		618B27494B504E31014AA74F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootView.swift"; sourceTree = "<group>"; };
+		8557433B58D40AA0C60C29FB /* AudioMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioMetadata.swift"; sourceTree = "<group>"; };
 		6F42311ADEC0AC23B44D92CC /* AudioPlaybackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioPlaybackController.swift"; sourceTree = "<group>"; };
 		E3195AFC3CEC030F24BDF6C4 /* WaveformExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaveformExtractor.swift"; sourceTree = "<group>"; };
 		894AC042DB809FFBA49F8EB1 /* WaveformSamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaveformSamples.swift"; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 		2B83FADC48D2048A0B4BE52B /* Audio */ = {
 			isa = PBXGroup;
 			children = (
+				8557433B58D40AA0C60C29FB /* AudioMetadata.swift */,
 				6F42311ADEC0AC23B44D92CC /* AudioPlaybackController.swift */,
 				E3195AFC3CEC030F24BDF6C4 /* WaveformExtractor.swift */,
 				894AC042DB809FFBA49F8EB1 /* WaveformSamples.swift */,
@@ -889,6 +892,7 @@
 				2EDC7B9BE134DAA879EDC6FC /* CreativoApp.swift */,
 				02A4E2AB96206F9077C4782B /* MainShellView.swift */,
 				A2B0DDAB27883487EC774BB9 /* RootView.swift */,
+				5DE36C34125B533BD812F06D /* AudioMetadata.swift */,
 				4575E16A528301A1EDC3C2E3 /* AudioPlaybackController.swift */,
 				AEFF11A6A86399C04F142306 /* WaveformExtractor.swift */,
 				B2CDC5B50066349507714693 /* WaveformSamples.swift */,

@@ -21,6 +21,14 @@ struct TimelineView: View {
     @State private var viewportWidth: CGFloat = 0
     @State private var pinchBasePixelsPerSecond: CGFloat?
     @State private var isSnapEnabled = true
+    @State private var revealRequest = RevealRequest(time: 0, counter: 0)
+
+    /// A request to bring a moment of the track on screen. The counter makes
+    /// two requests for the same time distinct, so asking twice still scrolls.
+    private struct RevealRequest: Equatable {
+        var time: TimeInterval
+        var counter: Int
+    }
 
     @State private var selectedSceneID: UUID?
     @State private var markerBeingEdited: TimelineMarker?
@@ -235,7 +243,8 @@ struct TimelineView: View {
                     TimelinePlayheadView(
                         playback: playback,
                         geometry: layout,
-                        height: lanesHeight
+                        height: lanesHeight,
+                        makeSnapper: { makeSnapper(for: layout) }
                     ) { second in
                         withAnimation(.easeOut(duration: 0.2)) {
                             proxy.scrollTo(anchorID(for: second), anchor: .center)
@@ -249,10 +258,18 @@ struct TimelineView: View {
                             pinchBasePixelsPerSecond = base
                             setZoom(base * value.magnification)
                         }
-                        .onEnded { _ in pinchBasePixelsPerSecond = nil }
+                        .onEnded { _ in
+                            pinchBasePixelsPerSecond = nil
+                            revealTimeline(at: playback.currentTime)
+                        }
                 )
             }
             .scrollIndicators(.visible)
+            .onChange(of: revealRequest) { _, request in
+                withAnimation(.easeOut(duration: 0.25)) {
+                    proxy.scrollTo(anchorID(for: request.time), anchor: .center)
+                }
+            }
         }
     }
 
@@ -421,13 +438,23 @@ struct TimelineView: View {
     private func fitAll() {
         let usable = max(viewportWidth - 8, 1)
         setZoom(TimelineGeometry.fittingPixelsPerSecond(duration: duration, availableWidth: usable))
+        revealTimeline(at: playback.currentTime)
     }
 
+    /// Zooming is anchored on the playhead: the moment being listened to stays
+    /// on screen instead of the view jumping to wherever the scroll offset
+    /// happened to land.
     private func zoom(by factor: CGFloat) {
         let current = pixelsPerSecond > 0
             ? pixelsPerSecond
             : TimelineGeometry.fittingPixelsPerSecond(duration: duration, availableWidth: max(viewportWidth - 8, 1))
         setZoom(current * factor)
+        revealTimeline(at: playback.currentTime)
+    }
+
+    /// Brings a moment of the track on screen at the next layout pass.
+    private func revealTimeline(at time: TimeInterval) {
+        revealRequest = RevealRequest(time: time, counter: revealRequest.counter + 1)
     }
 
     private func setZoom(_ value: CGFloat) {
@@ -475,9 +502,9 @@ struct TimelineView: View {
 
     private func select(_ scene: StoryScene, seek: Bool) {
         selectedSceneID = scene.id
-        if seek, let start = scene.musicFacet?.startTime {
-            playback.seek(to: start)
-        }
+        guard let start = scene.musicFacet?.startTime else { return }
+        if seek { playback.seek(to: start) }
+        revealTimeline(at: start)
     }
 
     private func addSection(_ kind: MusicSectionKind?) {
@@ -488,6 +515,7 @@ struct TimelineView: View {
             context: modelContext
         )
         selectedSceneID = scene.id
+        revealTimeline(at: playback.currentTime)
     }
 
     private func addMarker(_ type: TimelineMarkerType) {
@@ -519,11 +547,12 @@ struct TimelineView: View {
         case .success(let urls):
             guard let url = urls.first else { return }
             do {
-                if isReplacingTrack {
-                    try MediaImportService.replaceAudio(of: project, with: url, context: modelContext)
-                } else {
-                    try MediaImportService.importAudio(from: url, into: project, context: modelContext)
-                }
+                let asset = isReplacingTrack
+                    ? try MediaImportService.replaceAudio(of: project, with: url, context: modelContext)
+                    : try MediaImportService.importAudio(from: url, into: project, context: modelContext)
+                // Tags are read afterwards: a file with slow metadata must not
+                // hold up the waveform.
+                Task { await MediaImportService.refreshMetadata(for: asset, context: modelContext) }
             } catch {
                 importError = error.localizedDescription
             }
