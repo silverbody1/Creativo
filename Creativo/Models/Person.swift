@@ -29,6 +29,9 @@ final class Person {
     /// Shooting days this person is called on. Filled by the scheduling phase.
     var shootDays: [ShootDay] = []
 
+    /// Music-video sections this person appears in. Inverse lives on the facet.
+    var musicSections: [MusicVideoFacet] = []
+
     init(
         firstName: String = "",
         lastName: String = "",

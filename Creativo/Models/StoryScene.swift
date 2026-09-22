@@ -37,6 +37,17 @@ final class StoryScene {
     /// phase; declared now so the relationship never has to be migrated in.
     var shootDays: [ShootDay] = []
 
+    // MARK: Writing facets
+
+    /// Typed screenplay lines. Empty for a project written in another mode.
+    @Relationship(deleteRule: .cascade, inverse: \ScreenplayElement.scene)
+    var screenplayElements: [ScreenplayElement] = []
+
+    /// Music-video specifics. Present only on the scenes of a clip, where the
+    /// scene doubles as a section of the song.
+    @Relationship(deleteRule: .cascade, inverse: \MusicVideoFacet.scene)
+    var musicFacet: MusicVideoFacet?
+
     init(
         sceneNumber: String = "",
         title: String = "",
@@ -84,6 +95,22 @@ extension StoryScene {
         let place = location?.name.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let head = place.isEmpty ? displayTitle : place
         return "\(environment.abbreviation) \(head.uppercased()) — \(timeOfDay.displayName.uppercased())"
+    }
+
+    var sortedScreenplayElements: [ScreenplayElement] {
+        screenplayElements.sorted { lhs, rhs in
+            if lhs.orderIndex != rhs.orderIndex { return lhs.orderIndex < rhs.orderIndex }
+            return lhs.createdAt < rhs.createdAt
+        }
+    }
+
+    /// `true` once the scene has been written in the screenplay editor.
+    var hasScreenplay: Bool { !screenplayElements.isEmpty }
+
+    /// Name shown in the clip editor: the section, then the scene title.
+    var musicSectionName: String {
+        guard let facet = musicFacet else { return displayTitle }
+        return title.isBlank ? facet.displayName : "\(facet.displayName) · \(title)"
     }
 
     var sortedShots: [Shot] {

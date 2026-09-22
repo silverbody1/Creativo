@@ -67,3 +67,15 @@ extension Binding where Value == String {
         )
     }
 }
+
+extension Binding where Value == TimeInterval {
+    /// Presents an optional timecode as a duration field, treating "not set"
+    /// as zero while the field is on screen. The caller decides when the value
+    /// goes back to nil, because zero is a legitimate timecode.
+    static func optionalDuration(_ source: Binding<TimeInterval?>) -> Binding<TimeInterval> {
+        Binding<TimeInterval>(
+            get: { source.wrappedValue ?? 0 },
+            set: { newValue in source.wrappedValue = newValue }
+        )
+    }
+}

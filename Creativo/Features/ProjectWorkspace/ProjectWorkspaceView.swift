@@ -113,9 +113,31 @@ struct ProjectWorkspaceView: View {
         case .budget: value = project.budgetLines.count
         case .schedule: value = project.shootDays.count
         case .documents: value = project.references.count
-        case .overview, .writing, .board: return nil
+        case .writing: return project.hasWrittenMaterial ? writingBadge : nil
+        case .overview, .board: return nil
         }
         return value > 0 ? "\(value)" : nil
+    }
+
+    /// What the Writing row shows: pages for a screenplay, minutes for a video,
+    /// sections for a clip.
+    private var writingBadge: String? {
+        switch project.writingMode {
+        case .screenplay:
+            let pages = ScreenplayFormatter.pageCount(for: project.sortedScenes)
+            guard pages > 0 else { return nil }
+            return pages.formatted(.number.precision(.fractionLength(0...1))) + " p"
+        case .youtube:
+            let metrics = ScriptMetricsCalculator.metrics(
+                for: project.youtubeBlocks,
+                wordsPerMinute: project.wordsPerMinute
+            )
+            guard metrics.estimatedDuration > 0 else { return nil }
+            return "\(Int((metrics.estimatedDuration / 60).rounded())) min"
+        case .musicVideo:
+            let count = project.musicSections.count
+            return count > 0 ? "\(count)" : nil
+        }
     }
 
     // MARK: Detail
@@ -125,6 +147,8 @@ struct ProjectWorkspaceView: View {
         switch appState.workspaceSection {
         case .overview:
             ProjectOverviewView(project: project)
+        case .writing:
+            WritingView(project: project)
         case .scenes:
             SceneListView(project: project)
         case .shots:
@@ -139,7 +163,7 @@ struct ProjectWorkspaceView: View {
             BudgetView(project: project)
         case .schedule:
             ScheduleView(project: project)
-        case .writing, .board, .documents:
+        case .board, .documents:
             ComingSoonSectionView(section: appState.workspaceSection, project: project)
         }
     }

@@ -10,6 +10,7 @@ struct SceneEditorView: View {
     @Bindable var scene: StoryScene
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(AppState.self) private var appState
     @State private var shotBeingEdited: Shot?
 
     private var availableLocations: [ProductionLocation] {
@@ -83,11 +84,7 @@ struct SceneEditorView: View {
                     .lineLimit(2...6)
             }
 
-            Section("Contenu") {
-                TextEditor(text: $scene.content)
-                    .frame(minHeight: 180)
-                    .font(.body)
-            }
+            contentSection
 
             Section("Notes") {
                 TextField("Notes de préparation", text: $scene.notes, axis: .vertical)
@@ -104,6 +101,49 @@ struct SceneEditorView: View {
         }
         .sheet(item: $shotBeingEdited) { shot in
             ShotEditorSheet(shot: shot)
+        }
+    }
+
+    /// A scene written in the screenplay editor is shown read-only here, so the
+    /// two surfaces can never disagree about the same text.
+    @ViewBuilder
+    private var contentSection: some View {
+        if scene.hasScreenplay {
+            Section {
+                Text(scene.content)
+                    .font(.system(.callout, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button {
+                    appState.workspaceSection = .writing
+                } label: {
+                    Label("Ouvrir dans l'éditeur de scénario", systemImage: "doc.text")
+                }
+            } header: {
+                HStack {
+                    Text("Contenu")
+                    Spacer()
+                    Text(ScreenplayFormatter.pageCountText(for: [scene]))
+                        .monospacedDigit()
+                }
+                .textCase(nil)
+            } footer: {
+                Text("Ce texte est écrit dans la section Écriture. Il se met à jour automatiquement.")
+                    .font(.caption)
+            }
+        } else {
+            Section {
+                TextEditor(text: $scene.content)
+                    .frame(minHeight: 180)
+                    .font(.body)
+                Button {
+                    appState.workspaceSection = .writing
+                } label: {
+                    Label("Écrire dans l'éditeur de scénario", systemImage: "doc.text")
+                }
+            } header: {
+                Text("Contenu")
+            }
         }
     }
 
@@ -147,5 +187,6 @@ struct SceneEditorView: View {
     NavigationStack {
         SceneEditorView(scene: SampleData.previewScene())
     }
+    .environment(AppState())
     .modelContainer(SampleData.previewContainer)
 }

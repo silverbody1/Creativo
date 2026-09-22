@@ -22,18 +22,29 @@ final class AppState {
     /// Drives the "Créer un projet" sheet from anywhere, including the ⌘N menu command.
     var isPresentingNewProject = false
 
+    /// Writing takes over the whole window, hiding both sidebars.
+    var isWritingFocusMode = false
+
     init() {}
 
     // MARK: Intents
 
     func open(_ project: Project) {
         workspaceSection = .overview
+        isWritingFocusMode = false
         openedProject = project
+    }
+
+    /// Opens a project straight into its writing surface.
+    func openForWriting(_ project: Project) {
+        openedProject = project
+        workspaceSection = .writing
     }
 
     /// Leaves the workspace. Always call this *before* deleting the opened
     /// project so no view is left holding a deleted model.
     func closeProject() {
+        isWritingFocusMode = false
         openedProject = nil
     }
 

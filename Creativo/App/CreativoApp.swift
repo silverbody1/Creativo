@@ -7,7 +7,12 @@ struct CreativoApp: App {
     private let container: ModelContainer
 
     init() {
-        container = PersistenceController.makeAppContainer()
+        let container = PersistenceController.makeAppContainer()
+        // Model-level undo: a deleted line, a changed element type or a removed
+        // section can be taken back. Text undo inside a field stays the
+        // system's, so ⌘Z keeps doing what it does everywhere else.
+        container.mainContext.undoManager = UndoManager()
+        self.container = container
     }
 
     var body: some Scene {

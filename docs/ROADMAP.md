@@ -1,8 +1,8 @@
 # Feuille de route
 
-Seize phases. Une seule est livrée : la première. Les suivantes sont décrites
-pour que l'architecture actuelle ne les rende jamais difficiles à ajouter,
-**pas** pour être développées par anticipation.
+Seize phases. Deux sont livrées. Les suivantes sont décrites pour que
+l'architecture actuelle ne les rende jamais difficiles à ajouter, **pas** pour
+être développées par anticipation.
 
 ---
 
@@ -15,32 +15,48 @@ Voir [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ---
 
-## 2. Professional Writing
+## 2. Professional Writing ✅ livrée
 
-Éditeur de scénario digne de ce nom, en remplacement de la section Écriture.
+L'espace Écriture, avec trois surfaces qui suivent le type de projet.
 
-- Formatage automatique au standard scénario : séquence, action, personnage, dialogue, parenthétique, transition.
-- Navigation au clavier entre les types d'élément, sans souris.
-- Mode plein écran sans distraction.
-- Révisions colorées et historique des versions d'une scène.
-- Comptage de pages et estimation de durée à partir du texte.
-- Import et export Fountain.
+**Scénario** — film, court-métrage, publicité, projet vierge
+Lignes typées (action, personnage, dialogue, parenthèse, transition, note),
+changement de type au clavier par ⌘1 à ⌘6 ou d'une touche sur iPad, en-tête de
+scène relié aux vrais champs de la scène, navigation entre scènes, estimation
+du nombre de pages, mode focus, autosave, annuler/refaire.
 
-*S'appuie sur* : `StoryScene.content`, déjà en place.
+**Script YouTube** — vidéo, contenu social
+Accroche, intro, chapitres repliables, A-roll, B-roll, voix off, appel à
+l'action, note de montage, source. Réorganisation des blocs, compteur de mots
+et durée estimée à partir d'un débit de parole réglable. Un bloc se promeut en
+scène quand il mérite une liste de plans.
+
+**Écriture de clip** — clip musical
+Structure du morceau (intro, couplet, pré-refrain, refrain, pont, outro,
+personnalisée), timecodes optionnels, paroles, idée visuelle, registre
+narratif/playback/performance/mixte, lieux, distribution, tenues, accessoires,
+notes de réalisation et plans associés.
+
+Une section de clip *est* une scène, un scénario s'écrit *dans* les scènes
+existantes : aucune liste parallèle n'a été créée. Voir
+[ARCHITECTURE.md](ARCHITECTURE.md#4-lespace-écriture).
+
+Reste pour une phase ultérieure : révisions colorées, historique des versions,
+import et export Fountain.
 
 ---
 
 ## 3. Music Video Timeline
 
-Le clip musical n'a pas de scènes au sens narratif : il a une piste audio et
-des moments.
+La structure du morceau existe depuis la phase 2 ; il lui manque le son.
 
 - Import d'un fichier audio dans le projet.
 - Forme d'onde et marqueurs posés sur la timeline.
-- Association d'une scène à une plage temporelle du morceau.
-- Paroles synchronisées et découpage par section (intro, couplet, refrain, pont).
+- Calage des sections existantes sur la forme d'onde, par glissement.
+- Paroles synchronisées ligne à ligne.
 
-*S'appuie sur* : AVFoundation, `StoryScene.estimatedDuration`, `MediaStore`.
+*S'appuie sur* : AVFoundation, `MediaStore`, et les timecodes déjà saisis dans
+`MusicVideoFacet.startTime` / `endTime`, qui seront repris tels quels.
 
 ---
 

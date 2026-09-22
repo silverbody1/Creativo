@@ -26,7 +26,10 @@ enum PersistenceController {
             ShootDay.self,
             ReferenceAsset.self,
             ProjectPersonAssignment.self,
-            ProjectEquipmentAssignment.self
+            ProjectEquipmentAssignment.self,
+            ScreenplayElement.self,
+            YouTubeBlock.self,
+            MusicVideoFacet.self
         ])
     }
 
@@ -45,9 +48,41 @@ enum PersistenceController {
         do {
             return try ModelContainer(for: schema, configurations: configuration)
         } catch {
-            logger.error("Ouverture du store impossible, bascule en mémoire: \(String(describing: error))")
+            logger.error("Ouverture du store impossible: \(String(describing: error))")
+            // Never delete what could not be read. The unreadable store is moved
+            // aside under a timestamped name so it stays recoverable, and the
+            // app starts on a fresh one instead of refusing to launch.
+            if archiveStore(at: configuration.url),
+               let recovered = try? ModelContainer(for: schema, configurations: configuration) {
+                logger.notice("Store précédent archivé, nouveau store créé.")
+                return recovered
+            }
             return makeFallbackContainer()
         }
+    }
+
+    /// Renames the store and its sidecar files, keeping the data on disk.
+    private static func archiveStore(at url: URL) -> Bool {
+        let fileManager = FileManager.default
+        guard fileManager.fileExists(atPath: url.path(percentEncoded: false)) else { return false }
+
+        let stamp = ISO8601DateFormatter().string(from: .now).replacingOccurrences(of: ":", with: "-")
+        var movedAtLeastOne = false
+        for suffix in ["", "-wal", "-shm"] {
+            let source = URL(fileURLWithPath: url.path(percentEncoded: false) + suffix)
+            guard fileManager.fileExists(atPath: source.path(percentEncoded: false)) else { continue }
+            let destination = URL(
+                fileURLWithPath: url.path(percentEncoded: false) + ".sauvegarde-\(stamp)" + suffix
+            )
+            do {
+                try fileManager.moveItem(at: source, to: destination)
+                movedAtLeastOne = true
+            } catch {
+                logger.error("Archivage du store impossible: \(String(describing: error))")
+                return false
+            }
+        }
+        return movedAtLeastOne
     }
 
     /// Volatile container for previews, tests and the sample-data mode.

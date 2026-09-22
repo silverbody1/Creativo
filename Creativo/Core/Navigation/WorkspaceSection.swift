@@ -55,9 +55,9 @@ enum WorkspaceSection: String, CaseIterable, Identifiable, Hashable, Sendable {
     /// `true` for the sections fully implemented in phase 1.
     var isImplemented: Bool {
         switch self {
-        case .overview, .scenes, .shots, .locations, .people, .equipment, .budget, .schedule:
+        case .overview, .writing, .scenes, .shots, .locations, .people, .equipment, .budget, .schedule:
             return true
-        case .writing, .board, .documents:
+        case .board, .documents:
             return false
         }
     }

@@ -23,6 +23,17 @@ final class Project {
     var coverImagePath: String?
     var isFavorite: Bool = false
 
+    // MARK: Writing
+
+    /// Writing surface chosen by the user. `nil` follows the project type.
+    /// Stored as a single value today; a later phase can let a project carry
+    /// several modes without migrating anything already on disk.
+    var writingModeOverride: WritingMode?
+
+    /// Speaking rate used to turn a video script into an estimated duration.
+    /// Per project, because presenters do not all speak at the same pace.
+    var wordsPerMinute: Int = 150
+
     // MARK: Owned children
 
     @Relationship(deleteRule: .cascade, inverse: \StoryScene.project)
@@ -42,6 +53,9 @@ final class Project {
 
     @Relationship(deleteRule: .cascade, inverse: \ProjectEquipmentAssignment.project)
     var equipmentAssignments: [ProjectEquipmentAssignment] = []
+
+    @Relationship(deleteRule: .cascade, inverse: \YouTubeBlock.project)
+    var youtubeBlocks: [YouTubeBlock] = []
 
     // MARK: Library references
 
@@ -83,6 +97,29 @@ extension Project {
         name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ? "Projet sans titre"
             : name
+    }
+
+    /// Writing surface this project actually uses.
+    var writingMode: WritingMode {
+        writingModeOverride ?? type.defaultWritingMode
+    }
+
+    var sortedYouTubeBlocks: [YouTubeBlock] {
+        youtubeBlocks.sorted { lhs, rhs in
+            if lhs.orderIndex != rhs.orderIndex { return lhs.orderIndex < rhs.orderIndex }
+            return lhs.createdAt < rhs.createdAt
+        }
+    }
+
+    /// Scenes that carry a music-video facet, in section order.
+    var musicSections: [StoryScene] {
+        sortedScenes.filter { $0.musicFacet != nil }
+    }
+
+    /// `true` once the project holds any written material at all.
+    var hasWrittenMaterial: Bool {
+        !youtubeBlocks.isEmpty
+            || scenes.contains { !$0.screenplayElements.isEmpty || $0.musicFacet != nil }
     }
 
     var sortedScenes: [StoryScene] {

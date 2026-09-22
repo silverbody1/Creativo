@@ -15,7 +15,10 @@ struct RootView: View {
         @Bindable var appState = appState
 
         Group {
-            if let project = appState.openedProject {
+            if let project = appState.openedProject, appState.isWritingFocusMode {
+                WritingFocusView(project: project)
+                    .transition(.opacity)
+            } else if let project = appState.openedProject {
                 ProjectWorkspaceView(project: project)
                     .transition(.opacity)
             } else {
@@ -24,6 +27,7 @@ struct RootView: View {
             }
         }
         .animation(.smooth(duration: 0.22), value: appState.openedProject?.id)
+        .animation(.smooth(duration: 0.22), value: appState.isWritingFocusMode)
         .sheet(isPresented: $appState.isPresentingNewProject) {
             NewProjectSheet()
         }

@@ -33,10 +33,14 @@ Creativo/
 ├── DesignSystem/
 │   ├── DesignSystem.swift       Spacing, CornerRadius, LayoutMetrics, Surface
 │   ├── Tints.swift              couleur associée à chaque énumération du domaine
+│   ├── ScreenplayStyle.swift    typographie et marges du format scénario
 │   └── Components/              EmptyStateView, StatCard, Chip, SectionHeaderView, …
 ├── Models/                      entités SwiftData + énumérations
+│   └── Writing/                 modes d'écriture et facettes
 ├── Features/                    un dossier par écran
+│   └── Writing/                 les trois surfaces d'écriture
 ├── Services/                    règles métier pures, sans SwiftUI
+│   └── Writing/                 scénario, script vidéo, structure de clip
 ├── Utilities/                   formatage, bindings, adaptations plateforme
 └── PreviewContent/SampleData.swift
 ```
@@ -96,6 +100,9 @@ et horodatées par l'appel `commitEdits` correspondant.
 | `EquipmentItem` | Un matériel | **bibliothèque globale** |
 | `ProjectPersonAssignment` | Jointure projet ↔ personne | appartient aux deux |
 | `ProjectEquipmentAssignment` | Jointure projet ↔ matériel | appartient aux deux |
+| `ScreenplayElement` | Une ligne typée de scénario | appartient à la scène |
+| `MusicVideoFacet` | La face clip d'une scène | appartient à la scène |
+| `YouTubeBlock` | Un bloc de script vidéo | appartient au projet |
 
 ### La bibliothèque globale
 
@@ -144,7 +151,101 @@ flottant, pour la même raison.
 des images dans le store ralentirait chaque lecture et rendrait la
 synchronisation iCloud irréaliste.
 
-## 4. Navigation
+## 4. L'espace Écriture
+
+L'écriture n'est pas un écran de plus : c'est trois surfaces qui partagent la
+même colonne vertébrale.
+
+### La règle : une seule colonne vertébrale
+
+`StoryScene` reste l'unité de découpage de **tous** les types de projet. Les
+modes d'écriture ne créent pas de scènes parallèles, ils s'y accrochent.
+
+```
+                       ┌──────────────┐
+                       │   Project    │
+                       └──────┬───────┘
+              youtubeBlocks   │   scenes
+        ┌──────────────────┐  │  ┌─────────────────┐
+        │  YouTubeBlock    │  │  │   StoryScene    │
+        │  (script vidéo)  │  │  └────────┬────────┘
+        └────────┬─────────┘  │           │
+                 │ scene?     │     ┌─────┴──────┐
+                 └────────────┼────▶│            │
+                              │     ▼            ▼
+                        ScreenplayElement   MusicVideoFacet
+                        (film, pub)         (clip)
+```
+
+| Mode | Ce qui est écrit | Où c'est rangé |
+|---|---|---|
+| Scénario | Lignes typées : action, personnage, dialogue, parenthèse, transition, note | `ScreenplayElement`, enfants de la scène |
+| Script YouTube | Blocs : accroche, intro, chapitre, A-roll, B-roll, voix off, appel à l'action, note de montage, source | `YouTubeBlock`, enfants du projet |
+| Clip musical | Sections du morceau : type, timecode, paroles, idée visuelle, registre, tenues, accessoires, distribution | `MusicVideoFacet`, accroché 1 à 1 à une scène |
+
+Pourquoi le script YouTube fait exception : un script vidéo est un plan de
+rédaction, pas un découpage. L'y forcer produirait des scènes vides. Un bloc
+qui mérite une vraie scène — une liste de plans, un lieu, une journée de
+tournage — est **promu** en `StoryScene` d'un geste, et garde le lien. C'est
+ce pont qui relie l'écriture au reste de la production sans l'imposer.
+
+Pour le clip, l'inverse est vrai : une section *est* une scène. Le projet
+d'exemple a des scènes Intro, Couplet 1, Refrain 1 depuis la phase 1 ; elles
+reçoivent simplement leur facette, dont le type est déduit du titre. Aucune
+donnée n'est dupliquée, et les plans, le lieu et le jour de tournage d'une
+section sont ceux de la scène.
+
+### Le mode d'écriture est choisi, pas subi
+
+`Project.writingMode` vaut `writingModeOverride ?? type.defaultWritingMode`.
+Le type de projet propose, l'utilisateur dispose, et **changer de mode ne
+supprime jamais rien** : un projet peut porter un scénario, un script et une
+structure de clip en même temps. C'est ce qui permettra à une phase ultérieure
+d'activer plusieurs modes à la fois sans migrer quoi que ce soit.
+
+### Ce que la scène ne perd jamais
+
+`StoryScene.content` existe depuis la phase 1. Il n'a pas été supprimé :
+
+- à la première ouverture de l'éditeur, un texte déjà saisi est **analysé** en
+  lignes typées par `ScreenplayFormatter.parse` ; un paragraphe non reconnu
+  devient une action, donc rien n'est jamais perdu ;
+- ensuite, `content` est maintenu comme copie en texte brut de ce que
+  l'éditeur affiche, ce qui garde l'écran Scènes, la recherche et les futurs
+  exports cohérents.
+
+L'import ne s'exécute qu'une fois par scène, et jamais sur une scène qui a
+déjà des lignes.
+
+### Pagination
+
+`ScreenplayFormatter` compte les lignes d'une page de 12 pt Courier :
+55 lignes, largeurs de colonne par type d'élément, ligne vide après une
+action, un dialogue ou une transition. Les notes ne sont jamais imprimées.
+Tout est pur et testé directement.
+
+### Durée d'une vidéo
+
+`ScriptMetricsCalculator` ne compte que les mots **réellement prononcés** :
+un plan de B-roll, une note de montage ou une source ne se lisent pas à voix
+haute. Le débit est réglable par projet, parce que deux présentateurs ne
+parlent pas à la même vitesse.
+
+### Annuler et refaire
+
+`ModelContext.undoManager` est activé au lancement, ce qui rend réversible la
+suppression d'une ligne, un changement de type ou une section retirée. Les
+boutons vivent dans le menu de chaque éditeur ; ⌘Z reste l'annulation de
+texte du système, pour ne pas voler un raccourci que tout le monde connaît.
+
+### Mode focus
+
+Le mode focus est une prise de contrôle de la fenêtre au niveau de `RootView`,
+exactement comme l'ouverture d'un projet. Les deux barres latérales
+disparaissent et il ne reste que la page. Ce choix évite un `overlay` qui se
+comporterait différemment sur macOS et sur iPadOS.
+
+## 5. Navigation
 
 Deux niveaux, chacun étant un `NavigationSplitView` natif :
 
@@ -163,7 +264,7 @@ Chaque section reçoit une `NavigationStack` neuve via `.id(section)`, pour
 qu'un éditeur poussé dans une section ne reste pas affiché après un changement
 de section.
 
-## 5. Adaptation macOS / iPadOS
+## 6. Adaptation macOS / iPadOS
 
 `horizontalSizeClass` n'existe pas sur macOS. Les écrans qui changent de
 disposition mesurent donc la largeur réelle de leur conteneur avec
@@ -183,7 +284,7 @@ Les différences de plateforme sont concentrées dans
 Les cibles tactiles passent par `.touchTarget()`, qui garantit 44 pt de hauteur
 sans changer la taille visuelle.
 
-## 6. Design system
+## 7. Design system
 
 Trois barèmes seulement, pour que toutes les pages se ressemblent :
 
@@ -201,7 +302,7 @@ Tout écran sans contenu utilise `EmptyStateView`, y compris les sections pas
 encore développées : elles expliquent ce qu'elles feront et proposent l'action
 la plus utile en attendant.
 
-## 7. Services
+## 8. Services
 
 | Service | Responsabilité |
 |---|---|
@@ -213,16 +314,22 @@ la plus utile en attendant.
 | `LibraryService` | bibliothèque et affectations |
 | `ScheduleService` | journées de tournage |
 | `ProjectInsights` | liste « À préparer », déterministe |
+| `ScreenplayService` | lignes de scénario : création, type, ordre, import |
+| `ScreenplayFormatter` | rendu en texte, pagination, analyse — pur |
+| `YouTubeScriptService` | blocs de script, repli, promotion en scène |
+| `ScriptMetricsCalculator` | mots et durée estimée — pur |
+| `MusicVideoService` | sections de clip, facettes, distribution |
 | `PersistenceActions` | enregistrement et journalisation |
 
-`BudgetCalculator` et `ProjectInsights` ne touchent ni à SwiftData ni à
-SwiftUI : ce sont des fonctions pures, testées directement.
+`BudgetCalculator`, `ProjectInsights`, `ScreenplayFormatter` et
+`ScriptMetricsCalculator` ne touchent ni à SwiftData ni à SwiftUI : ce sont des
+fonctions pures, testées directement.
 
 Les totaux ne sont **jamais** stockés. `Project.budgetSummary` est recalculé à
 chaque lecture, si bien qu'éditer une ligne met à jour l'en-tête, le sous-total
 de catégorie et le tableau de bord dans la même image.
 
-## 8. Intégrations prévues
+## 9. Intégrations prévues
 
 L'architecture actuelle ne bloque aucune des intégrations suivantes.
 
@@ -235,7 +342,25 @@ L'architecture actuelle ne bloque aucune des intégrations suivantes.
 | PhotosUI | import de couvertures et références | `coverImagePath`, `MediaStore.importFile` |
 | PDFKit | feuilles de service, exports | `ShootDay` relié aux scènes et aux personnes |
 
-## 9. Conventions pour les prochaines phases
+## 10. Migrations
+
+Le schéma n'évolue **que par ajout** : nouvelles entités, nouvelles propriétés
+avec valeur par défaut, nouvelles relations initialisées à vide ou optionnelles.
+SwiftData applique alors une migration légère automatiquement, et les données
+déjà sur disque sont conservées telles quelles. C'est ainsi que la phase 2 a
+ajouté trois entités et cinq propriétés sans qu'un projet existant perde une
+ligne.
+
+Le jour où une propriété devra être renommée, retypée ou supprimée, cette
+garantie tombe : il faudra un `VersionedSchema` par version et un
+`SchemaMigrationPlan` déclarant l'étape correspondante. Tant que la règle
+additive tient, s'en passer est le choix le plus sûr.
+
+Si malgré tout le store refuse de s'ouvrir, `PersistenceController` ne le
+supprime jamais : il le **renomme** avec un horodatage et repart sur un store
+neuf. Les données restent récupérables sur le disque et l'application se lance.
+
+## 11. Conventions pour les prochaines phases
 
 1. **Une nouvelle entité** s'ajoute dans `Models/`, puis dans
    `PersistenceController.schema`, puis dans `SampleData`. Les trois, sinon les
@@ -255,8 +380,13 @@ L'architecture actuelle ne bloque aucune des intégrations suivantes.
    avoir ajouté un fichier.
 8. **Chaque règle de suppression a un test.** C'est l'opération la plus risquée
    d'un modèle relationnel.
+9. **Le schéma n'évolue que par ajout** tant qu'aucun `SchemaMigrationPlan`
+   n'existe. Voir la section Migrations.
+10. **Une nouvelle surface d'écriture** s'ajoute dans `WritingMode`, dans le
+    `switch` de `WritingView`, et sous la forme d'une facette accrochée à
+    `StoryScene` — jamais d'une liste de scènes parallèle.
 
-## 10. Tests
+## 12. Tests
 
 `CreativoTests/` couvre :
 
@@ -268,6 +398,11 @@ L'architecture actuelle ne bloque aucune des intégrations suivantes.
 - toutes les règles de suppression et de détachement
 - cohérence des données de démonstration et de la liste « À préparer »
 - formatage des durées, cadences, compteurs et recherche sans accents
+- rendu, pagination et analyse du scénario, import d'un texte déjà saisi
+- ordre, typage et suppression des lignes de scénario
+- blocs de script vidéo : repli, comptage, durée, promotion en scène
+- sections de clip : facettes, déduction du type, timecodes, distribution
+- le mode d'écriture suit le type de projet et n'efface rien quand il change
 
 Chaque test reçoit son propre `ModelContainer` en mémoire via
 `CreativoTestCase`, donc aucun test ne dépend d'un autre.

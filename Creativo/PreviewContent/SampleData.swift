@@ -27,10 +27,12 @@ enum SampleData {
 
     // MARK: Preview accessors
 
-    @MainActor static func previewProject() -> Project {
+    /// A sample project of the requested kind, so a preview can show the right
+    /// writing surface without building its own fixture.
+    @MainActor static func previewProject(type: ProjectType = .musicVideo) -> Project {
         let context = previewContainer.mainContext
         let existing = (try? context.fetch(FetchDescriptor<Project>())) ?? []
-        if let partenaire = existing.first(where: { $0.name == "PARTENAIRE" }) { return partenaire }
+        if let match = existing.first(where: { $0.type == type }) { return match }
         if let first = existing.first { return first }
         return populate(context)
     }
@@ -71,7 +73,8 @@ enum SampleData {
         insertBudget(into: project, context: context)
         insertShootDays(into: project, context: context)
 
-        insertSecondProject(into: context, locations: locations)
+        insertScreenplayProject(into: context, locations: locations)
+        insertVideoProject(into: context)
 
         PersistenceActions.save(context)
         return project
@@ -273,7 +276,58 @@ enum SampleData {
             scene.location = definition.5
             context.insert(scene)
             insertShots(into: scene, context: context)
+            insertMusicFacet(into: scene, context: context)
         }
+    }
+
+    /// The clip-specific side of each section: kind, timecode, lyrics, intention.
+    private static func insertMusicFacet(into scene: StoryScene, context: ModelContext) {
+        let definitions: [String: (MusicSectionKind, TimeInterval, TimeInterval, MusicPerformanceMode, String, String, String)] = [
+            "Intro": (
+                .intro, 0, 22, .narrative,
+                "",
+                "Noir complet, puis une seule source qui découvre le visage par la droite. Rien d'autre.",
+                "Total noir, veste en cuir"
+            ),
+            "Couplet 1": (
+                .verse, 22, 70, .playback,
+                "On s'était dit rendez-vous dans dix ans\nMême jour, même heure, mêmes pommes",
+                "Face caméra, très peu de mouvement. On laisse le texte porter.",
+                "Total noir, veste en cuir"
+            ),
+            "Refrain 1": (
+                .chorus, 70, 108, .performance,
+                "Partenaire, partenaire\nOn se relève ensemble ou pas du tout",
+                "Le rooftop s'ouvre, la ville derrière. Orbite lente au gimbal, la lumière monte avec le refrain.",
+                "Manteau long clair"
+            ),
+            "Couplet 2": (
+                .verse, 108, 154, .playback,
+                "Deuxième tour de piste, mêmes rues\nMais la voix ne tremble plus",
+                "Retour studio, cadre plus serré qu'au premier couplet. Le décor se resserre avec lui.",
+                "Total noir, veste en cuir"
+            ),
+            "Refrain 2": (
+                .chorus, 154, 206, .mixed,
+                "Partenaire, partenaire\nOn se relève ensemble ou pas du tout",
+                "Même axe que le premier refrain mais la lumière a basculé : le jour se lève pendant la prise.",
+                "Manteau long clair"
+            )
+        ]
+
+        guard let definition = definitions[scene.title] else { return }
+        let facet = MusicVideoFacet(
+            kind: definition.0,
+            startTime: definition.1,
+            endTime: definition.2,
+            lyrics: definition.4,
+            visualIdea: definition.5,
+            performanceMode: definition.3,
+            wardrobe: definition.6,
+            props: definition.0 == .chorus ? "Fumigène, miroir de poche" : ""
+        )
+        facet.scene = scene
+        context.insert(facet)
     }
 
     private static func insertShots(into scene: StoryScene, context: ModelContext) {
@@ -416,7 +470,7 @@ enum SampleData {
         }
     }
 
-    private static func insertSecondProject(into context: ModelContext, locations: SampleLocations) {
+    private static func insertScreenplayProject(into context: ModelContext, locations: SampleLocations) {
         let project = Project(
             name: "LISIÈRE",
             type: .film,
@@ -440,6 +494,86 @@ enum SampleData {
             )
             scene.project = project
             context.insert(scene)
+            insertScreenplay(into: scene, context: context)
+        }
+    }
+
+    /// A few typed lines per scene, so the screenplay editor and the page count
+    /// have something real to show.
+    private static func insertScreenplay(into scene: StoryScene, context: ModelContext) {
+        let definitions: [String: [(ScreenplayElementType, String)]] = [
+            "Séquence d'ouverture": [
+                (.action, "Un chemin de terre disparaît sous les fougères. NOÉ, quinze ans, marche vite, sans se retourner."),
+                (.character, "NOÉ"),
+                (.parenthetical, "sans ralentir"),
+                (.dialogue, "Si tu traînes encore, on y sera à la nuit."),
+                (.action, "Derrière lui, MAÏA s'arrête net et regarde les arbres."),
+                (.character, "MAÏA"),
+                (.dialogue, "On est déjà passés ici. Deux fois."),
+                (.note, "Vérifier la continuité lumière entre les deux passages.")
+            ],
+            "La clairière": [
+                (.action, "La forêt s'ouvre d'un coup sur une clairière parfaitement ronde. Aucun oiseau."),
+                (.character, "MAÏA"),
+                (.dialogue, "Il n'y a pas de vent."),
+                (.action, "Noé pose son sac. Le silence tient une seconde de trop."),
+                (.transition, "CUT TO:")
+            ],
+            "Le retour": [
+                (.action, "Le même chemin, à l'envers, dans une lumière de fin de jour."),
+                (.character, "NOÉ"),
+                (.dialogue, "On ne le dit à personne."),
+                (.action, "Maïa ne répond pas. Elle marche devant, pour la première fois.")
+            ]
+        ]
+
+        guard let lines = definitions[scene.title] else { return }
+        for (index, line) in lines.enumerated() {
+            let element = ScreenplayElement(type: line.0, text: line.1, orderIndex: index)
+            element.scene = scene
+            context.insert(element)
+        }
+        scene.content = ScreenplayFormatter.plainText(for: scene)
+    }
+
+    /// A YouTube project, so the third writing surface is populated too.
+    private static func insertVideoProject(into context: ModelContext) {
+        let project = Project(
+            name: "Éclairer un plan avec une seule source",
+            type: .youtube,
+            status: .writing,
+            synopsis: "Format pédagogique de huit minutes : une source, quatre positions, quatre intentions.",
+            targetBudget: 400
+        )
+        project.wordsPerMinute = 150
+        context.insert(project)
+
+        let blocks: [(YouTubeBlockKind, String, String)] = [
+            (.hook, "Accroche", "Quatre-vingt-dix pour cent de ce que vous croyez être un problème de caméra est un problème de lumière. Je vous le prouve en huit minutes, avec une seule lampe."),
+            (.intro, "Intro", "On va prendre le même plan, le même objectif, la même actrice, et déplacer une seule source quatre fois. Rien d'autre ne bouge."),
+            (.section, "1. La position de base", ""),
+            (.aRoll, "Face caméra", "La position la plus sûre, et la plus plate : la source à quarante-cinq degrés, à hauteur d'œil. C'est le point de départ, jamais l'arrivée."),
+            (.bRoll, "Démonstration", "Plan large du plateau, puis retour caméra sur le visage. Montrer le pied de lampe et le repère au sol."),
+            (.section, "2. Descendre la source", ""),
+            (.aRoll, "Face caméra", "Vous descendez la source sous la ligne des yeux et le visage change de genre. C'est exactement ce que fait un feu de camp."),
+            (.editNote, "Montage", "Split screen des deux positions, coupe au rythme de la musique."),
+            (.section, "3. Passer derrière", ""),
+            (.voiceOver, "Voix off", "En contre-jour, la source ne décrit plus le visage : elle le découpe. On perd l'information, on gagne la silhouette."),
+            (.bRoll, "Illustration", "Contre-jour avec de la fumée, ralenti léger."),
+            (.source, "Référence", "Painting with Light, John Alton, chapitre 3."),
+            (.callToAction, "Appel à l'action", "Si vous refaites l'exercice chez vous, postez le résultat en commentaire. Je réponds à tout le monde pendant les premières vingt-quatre heures.")
+        ]
+
+        for (index, definition) in blocks.enumerated() {
+            let block = YouTubeBlock(
+                kind: definition.0,
+                title: definition.1,
+                text: definition.2,
+                orderIndex: index,
+                urlString: definition.0 == .source ? "https://example.com/painting-with-light" : ""
+            )
+            block.project = project
+            context.insert(block)
         }
     }
 }

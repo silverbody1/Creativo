@@ -49,15 +49,6 @@ struct ComingSoonSectionView: View {
 
     private var copy: Copy {
         switch section {
-        case .writing:
-            return Copy(
-                title: "Écriture",
-                message: "Un véritable éditeur de scénario, avec formatage automatique, révisions et lecture plein écran.",
-                tint: .blue,
-                actionTitle: "Écrire dans les scènes",
-                actionSymbol: "list.bullet.rectangle",
-                fallbackSection: .scenes
-            )
         case .board:
             return Copy(
                 title: "Board",

@@ -6,7 +6,7 @@ Creativo couvre la chaîne complète d'un projet vidéo — idée, écriture, sc
 découpage, plans, lieux, équipe, matériel, budget, planning — dans une seule
 application SwiftUI partagée entre **macOS** et **iPadOS**.
 
-Ce dépôt contient la **Phase 1 — Fondations**.
+Ce dépôt contient les phases **1 — Fondations** et **2 — Écriture professionnelle**.
 
 ## Prérequis
 
@@ -53,6 +53,7 @@ Rien n'est simulé.
 - **Projets** — création guidée par type, recherche, affichage grille ou liste, favoris, statut, suppression confirmée.
 - **Workspace de projet** — barre latérale interne avec compteurs, onze sections.
 - **Vue d'ensemble** — identité du projet, six cartes de chiffres clés, liste « À préparer » déduite des données.
+- **Écriture** — trois surfaces selon le type de projet : éditeur de scénario, script YouTube, structure de clip. Mode focus, annuler/refaire, autosave.
 - **Scènes** — création, édition, réordonnancement, renumérotation, recherche, suppression confirmée.
 - **Plans** — regroupés par scène, progression « X / Y plans tournés », statut en un clic, réordonnancement.
 - **Budget** — cible, prévisionnel, dépensé, restant, lignes groupées par catégorie, TVA, montant réellement payé, écart.
@@ -72,12 +73,19 @@ Rien n'est simulé.
 | ⌘1 … ⌘4 | Accueil, Projets, Favoris, Bibliothèque |
 | ⌘⇧W | Fermer le projet ouvert |
 | ⌘[ | Revenir aux projets depuis un workspace |
+| ⌘⇧N | Nouvelle scène dans l'éditeur de scénario |
+| ⌘⇧F | Entrer ou sortir du mode focus |
+| ⌘1 … ⌘6 | Type de la ligne de scénario en cours |
+| ⌘↩ | Nouvelle ligne de scénario |
+| Échap | Quitter le mode focus |
 
 ## Ce qui n'est pas encore là
 
-Écriture de scénario professionnelle, board visuel et documents sont présents
-dans la navigation avec un véritable écran d'état vide, mais leur
-fonctionnalité appartient à une phase dédiée. Voir [docs/ROADMAP.md](docs/ROADMAP.md).
+Board visuel et documents sont présents dans la navigation avec un véritable
+écran d'état vide, mais leur fonctionnalité appartient à une phase dédiée.
+Côté écriture, les révisions colorées, l'historique des versions et l'import
+ou export Fountain viendront plus tard, comme la forme d'onde audio du clip.
+Voir [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Organisation du dépôt
 
@@ -87,7 +95,7 @@ Creativo/
   Core/             persistance et état de navigation
   DesignSystem/     jetons visuels et composants réutilisables
   Models/           entités SwiftData et énumérations du domaine
-  Features/         un dossier par écran
+  Features/         un dossier par écran, dont Writing/ et ses trois surfaces
   Services/         règles métier, sans SwiftUI
   Utilities/        formatage, bindings, adaptations par plateforme
   PreviewContent/   données de démonstration
